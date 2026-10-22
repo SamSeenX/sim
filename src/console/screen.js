@@ -2,7 +2,7 @@ import { FONT } from './font.js';
 
 const LOGICAL_W = 160;
 const LOGICAL_H = 144;
-const GAP_PX = 2; // 2px gap between pixels
+const GAP_PX = 1; // 1px gap between pixels
 
 let displayCanvas, displayCtx;
 let pixelW = 1;
