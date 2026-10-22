@@ -1,5 +1,5 @@
 import { clearScreen, drawRect, drawSprite, drawText, getLogicalW, getLogicalH } from '../../console/screen.js';
-import { MOCHI_IDLE, PIGEON, FISH } from './rooftop-sprites.js';
+import { MOCHI_IDLE, MOCHI_RUN_1, MOCHI_RUN_2, MOCHI_JUMP, PIGEON, FISH } from './rooftop-sprites.js';
 import { TILE } from './rooftop-data.js';
 
 export function renderRooftop(state) {
@@ -19,11 +19,11 @@ export function renderRooftop(state) {
     const sx = t.x - camX;
     if (sx + TILE < 0 || sx > W) return;
     
-    if (t.type === 1) { // Solid roof brick
+    if (t.type === 1) {
       drawRect(sx, t.y, TILE, TILE, 3);
       drawRect(sx + 1, t.y + 1, TILE - 2, 2, 2);
       drawRect(sx + 1, t.y + 3, TILE - 2, TILE - 4, 3);
-    } else if (t.type === 3) { // AC Unit with airflow
+    } else if (t.type === 3) {
       drawRect(sx, t.y, TILE, TILE, 2);
       drawRect(sx + 2, t.y + 2, TILE - 4, TILE - 4, 3);
       for (let ay = t.y - 8; ay < t.y; ay += 3) {
@@ -45,8 +45,16 @@ export function renderRooftop(state) {
     if (sx >= -12 && sx < W) drawSprite(PIGEON, sx, e.y);
   });
 
-  // Mochi the cat
-  drawSprite(MOCHI_IDLE, Math.round(state.player.screenX), Math.round(state.player.y));
+  // Animated Mochi the cat
+  const p = state.player;
+  let sprite = MOCHI_IDLE;
+  if (!p.onGround) {
+    sprite = MOCHI_JUMP;
+  } else if (p.moving) {
+    sprite = Math.floor(p.animTimer * 9) % 2 === 0 ? MOCHI_RUN_1 : MOCHI_RUN_2;
+  }
+
+  drawSprite(sprite, Math.round(p.screenX), Math.round(p.y));
 
   // HUD
   drawText(`SC:${state.score}`, 2, 2, 3);

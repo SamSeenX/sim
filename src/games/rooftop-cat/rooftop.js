@@ -42,7 +42,9 @@ export class RooftopGame extends GameBase {
         vy: 0,
         onGround: false,
         jumps: 0,
-        screenX: 16
+        screenX: 16,
+        moving: false,
+        animTimer: 0
       },
       enemies: lvl.enemies.map(e => ({
         x: e.col * TILE,
@@ -80,9 +82,16 @@ export class RooftopGame extends GameBase {
     if (s.phase !== 'play') return;
     const p = s.player;
 
+    p.moving = this._held.left || this._held.right;
     if (this._held.left)  p.x -= RUN_SPD * dt;
     if (this._held.right) p.x += RUN_SPD * dt;
     p.x = Math.max(0, p.x);
+
+    if (p.moving) {
+      p.animTimer += dt;
+    } else {
+      p.animTimer = 0;
+    }
 
     p.vy += GRAVITY * dt;
     p.y  += p.vy * dt;
