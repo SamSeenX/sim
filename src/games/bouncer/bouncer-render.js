@@ -8,6 +8,7 @@ export function renderBouncer(state) {
 
   // HUD: dark olive shade 3
   drawText(`SC:${state.score}`, 2, 2, 3);
+  drawText(`HI:${state.hiScore || 0}`, 54, 2, 2);
   for (let i = 0; i < state.lives; i++) {
     drawRect(W - 8 - i * 6, 2, 4, 4, 3);
   }

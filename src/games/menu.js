@@ -48,15 +48,20 @@ export class MenuGame extends GameBase {
     GAMES.forEach((name, i) => {
       const y = 36 + i * 16;
       const selected = i === this.cursor;
+      const key = name.toLowerCase().replace(' ', '-');
+      const hi = this.store.getScore(key) || 0;
+
       if (selected) {
         drawRect(14, y - 2, W - 28, 13, 2);
         drawRect(16, y, W - 32, 9, 0);
         if (Math.floor(this.blink * 3) % 2 === 0) {
           drawText('>', 19, y + 1, 3);
         }
-        drawText(name, 28, y + 1, 3);
+        drawText(name, 26, y + 1, 3);
+        drawText(`HI:${hi}`, 102, y + 1, 3);
       } else {
-        drawText(name, 28, y + 1, 2);
+        drawText(name, 26, y + 1, 2);
+        drawText(`HI:${hi}`, 102, y + 1, 1);
       }
     });
 

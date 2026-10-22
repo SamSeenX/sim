@@ -37,16 +37,18 @@ export function renderBlockFall(state) {
     });
   }
 
-  // HUD: Score and Level
-  drawText('SC', HUD_X, FIELD_Y, 2);
-  drawText(String(state.score), HUD_X, FIELD_Y + 9, 3);
-  drawText('LV', HUD_X, FIELD_Y + 23, 2);
-  drawText(String(state.level), HUD_X, FIELD_Y + 32, 3);
+  // HUD: High Score, Score, Level
+  drawText('HI', HUD_X, FIELD_Y, 2);
+  drawText(String(state.hiScore || 0), HUD_X, FIELD_Y + 8, 3);
+  drawText('SC', HUD_X, FIELD_Y + 17, 2);
+  drawText(String(state.score), HUD_X, FIELD_Y + 25, 3);
+  drawText('LV', HUD_X, FIELD_Y + 34, 2);
+  drawText(String(state.level), HUD_X, FIELD_Y + 42, 3);
 
   // HUD: Next Piece Preview Box
-  drawText('NEXT', HUD_X, FIELD_Y + 47, 2);
+  drawText('NEXT', HUD_X, FIELD_Y + 52, 2);
   const boxX = HUD_X - 1;
-  const boxY = FIELD_Y + 56;
+  const boxY = FIELD_Y + 60;
   const boxW = 38;
   const boxH = 26;
   drawRect(boxX, boxY, boxW, boxH, 2);

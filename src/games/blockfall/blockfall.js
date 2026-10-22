@@ -34,11 +34,13 @@ export class BlockFallGame extends GameBase {
 
   init() {
     on('input:down', this._onInput);
+    const hi = this.store.getScore('blockfall') || 0;
     this.state = {
       field: emptyField(),
       piece: randPiece(),
       next: randPiece(),
       score: 0,
+      hiScore: hi,
       lines: 0,
       level: 1,
       phase: 'play'
@@ -141,6 +143,10 @@ export class BlockFallGame extends GameBase {
     if (cleared) {
       s.lines += cleared;
       s.score += [0, 100, 300, 500, 800][cleared] * s.level;
+      if (s.score > s.hiScore) {
+        s.hiScore = s.score;
+        this.store.setScore('blockfall', s.score);
+      }
       s.level = Math.floor(s.lines / 10) + 1;
       emit('audio:play', 'line');
     } else {

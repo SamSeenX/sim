@@ -68,12 +68,16 @@ export class BouncerGame extends GameBase {
         });
       });
     });
+    const hi = this.store.getScore('bouncer') || 0;
+    const prevScore = this.state ? this.state.score : 0;
+    const prevLives = this.state ? this.state.lives : 3;
     this.state = {
       paddle: { x: (W - PADDLE_W) / 2 },
       balls: [{ x: W / 2, y: H - PADDLE_H - 10, vx: BALL_SPEED_BASE * 0.6, vy: -BALL_SPEED_BASE }],
       bricks,
-      score: 0,
-      lives: 3,
+      score: prevScore,
+      hiScore: Math.max(hi, prevScore),
+      lives: prevLives,
       level: idx,
       phase: 'ready',
     };
@@ -116,6 +120,10 @@ export class BouncerGame extends GameBase {
           if (b.hits >= maxHits) {
             b.alive = false;
             s.score += b.type === 2 ? 20 : 10;
+            if (s.score > s.hiScore) {
+              s.hiScore = s.score;
+              this.store.setScore('bouncer', s.score);
+            }
             if (b.type === 3) {
               s.balls.push({ x: ball.x, y: ball.y, vx: -ball.vx, vy: ball.vy });
               emit('audio:play', 'powerup');

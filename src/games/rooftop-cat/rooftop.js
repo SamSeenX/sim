@@ -2,11 +2,9 @@ import { GameBase } from '../game-base.js';
 import { on, off, emit } from '../../core/event-bus.js';
 import { renderRooftop } from './rooftop-render.js';
 import { LEVELS, TILE } from './rooftop-data.js';
+import { updatePhysics } from './rooftop-physics.js';
 
-const GRAVITY  = 260;
-const JUMP_V   = -125;
-const RUN_SPD  = 65;
-const AC_PUSH  = -150;
+const JUMP_V = -125;
 
 export class RooftopGame extends GameBase {
   constructor(store) {
@@ -31,6 +29,8 @@ export class RooftopGame extends GameBase {
   _loadLevel(idx) {
     const lvl = LEVELS[idx];
     const tiles = lvl.tiles.map(([col, row, type]) => ({ x: col * TILE, y: row * TILE, type }));
+    const hi = this.store.getScore('rooftop-cat') || 0;
+    const prevScore = this.state && this.state.phase !== 'gameover' ? this.state.score : 0;
 
     this.state = {
       level: idx,
@@ -55,20 +55,25 @@ export class RooftopGame extends GameBase {
       })),
       fish: lvl.fish.map(f => ({ x: f.col * TILE, y: f.row * TILE - 8, collected: false })),
       camX: 0,
-      score: 0,
+      score: prevScore,
+      hiScore: Math.max(hi, prevScore),
       phase: 'play',
     };
   }
 
   _onDown(a) {
     const s = this.state;
+    if (s.phase === 'gameover') {
+      if (a === 'a' || a === 'start') {
+        this.state = null;
+        this._loadLevel(0);
+        emit('audio:play', 'select');
+      } else if (a === 'b' || a === 'select') emit('game:exit');
+      return;
+    }
     if (s.phase === 'paused') {
-      if (a === 'start') {
-        s.phase = 'play';
-        emit('audio:play', 'cursor');
-      } else if (a === 'b' || a === 'select') {
-        emit('game:exit');
-      }
+      if (a === 'start') { s.phase = 'play'; emit('audio:play', 'cursor'); }
+      else if (a === 'b' || a === 'select') emit('game:exit');
       return;
     }
     if (a === 'start' && s.phase === 'play') {
@@ -97,49 +102,13 @@ export class RooftopGame extends GameBase {
     if (s.phase !== 'play') return;
     const p = s.player;
 
-    p.moving = this._held.left || this._held.right;
-    if (this._held.left)  p.x -= RUN_SPD * dt;
-    if (this._held.right) p.x += RUN_SPD * dt;
-    p.x = Math.max(0, p.x);
-
-    if (p.moving) {
-      p.animTimer += dt;
-    } else {
-      p.animTimer = 0;
-    }
-
-    p.vy += GRAVITY * dt;
-    p.y  += p.vy * dt;
-
-    p.onGround = false;
-    s.tiles.forEach(t => {
-      if (t.type === 0) return;
-      if (p.x + 11 > t.x && p.x < t.x + TILE && p.y + 11 > t.y && p.y < t.y + TILE) {
-        if (p.vy >= 0 && p.y + 11 - p.vy * dt <= t.y + 2) {
-          p.y = t.y - 11;
-          p.vy = 0;
-          p.onGround = true;
-          p.jumps = 0;
-        } else if (p.vy < 0) {
-          p.vy = 0;
-          p.y = t.y + TILE;
-        }
-        if (t.type === 3 && p.x + 6 > t.x && p.x < t.x + TILE) {
-          p.vy = AC_PUSH;
-          emit('audio:play', 'bounce');
-        }
-      }
-    });
+    updatePhysics(s, this._held, dt);
 
     if (p.y > 144) {
       s.phase = 'gameover';
       emit('audio:play', 'gameover');
-      this.store.setScore('rooftop', s.score);
+      this.store.setScore('rooftop-cat', s.score);
     }
-
-    const targetCam = p.x - 16;
-    s.camX += (targetCam - s.camX) * 0.12;
-    s.camX = Math.max(0, Math.min(s.camX, s.levelData.width * TILE - 160));
 
     s.enemies.forEach(e => {
       e.x += e.dir * 24 * dt;
@@ -148,7 +117,7 @@ export class RooftopGame extends GameBase {
       if (Math.abs(e.x - p.x) < 9 && Math.abs(e.y - p.y) < 9) {
         s.phase = 'gameover';
         emit('audio:play', 'noise');
-        this.store.setScore('rooftop', s.score);
+        this.store.setScore('rooftop-cat', s.score);
       }
     });
 
@@ -156,6 +125,10 @@ export class RooftopGame extends GameBase {
       if (!f.collected && Math.abs(f.x - p.x) < 10 && Math.abs(f.y - p.y) < 10) {
         f.collected = true;
         s.score += 50;
+        if (s.score > s.hiScore) {
+          s.hiScore = s.score;
+          this.store.setScore('rooftop-cat', s.score);
+        }
         emit('audio:play', 'collect');
       }
     });
@@ -163,7 +136,7 @@ export class RooftopGame extends GameBase {
     if (s.fish.every(f => f.collected)) {
       s.phase = 'win';
       emit('audio:play', 'powerup');
-      this.store.setScore('rooftop', s.score);
+      this.store.setScore('rooftop-cat', s.score);
       setTimeout(() => this._loadLevel((s.level + 1) % LEVELS.length), 2000);
     }
   }

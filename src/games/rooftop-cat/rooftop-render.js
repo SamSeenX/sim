@@ -58,6 +58,7 @@ export function renderRooftop(state) {
 
   // HUD
   drawText(`SC:${state.score}`, 2, 2, 3);
+  drawText(`HI:${state.hiScore || 0}`, 54, 2, 2);
   drawText(`LV${state.level + 1}`, W - 24, 2, 3);
 
   if (state.phase === 'paused') {

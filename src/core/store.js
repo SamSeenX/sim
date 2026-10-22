@@ -2,7 +2,14 @@ import { emit } from './event-bus.js';
 
 const DEFAULTS = {
   theme: 'ironside',
-  scores: { bouncer: 0, blockfall: 0, rooftop: 0 },
+  scores: {
+    bouncer: 0,
+    blockfall: 0,
+    rooftop: 0,
+    'rooftop-cat': 0,
+    snake: 0,
+    defender: 0
+  },
   activeGame: null,
 };
 
@@ -13,7 +20,10 @@ function load() {
     const t = localStorage.getItem('pv_theme');
     if (t) state.theme = t;
     const s = localStorage.getItem('pv_scores');
-    if (s) state.scores = JSON.parse(s);
+    if (s) {
+      const parsed = JSON.parse(s);
+      state.scores = { ...DEFAULTS.scores, ...parsed };
+    }
   } catch (_) { /* corrupt storage — fallback to defaults */ }
 }
 
@@ -33,11 +43,20 @@ export function initStore() {
       save();
       emit('theme:change', t);
     },
-    getScore: game => (state.scores && state.scores[game]) || 0,
+    getScore(game) {
+      if (!state.scores) return 0;
+      if (state.scores[game] !== undefined) return state.scores[game];
+      if (game === 'rooftop-cat') return state.scores.rooftop || 0;
+      if (game === 'rooftop') return state.scores['rooftop-cat'] || 0;
+      return 0;
+    },
     getScores: () => ({ ...state.scores }),
     setScore(game, score) {
-      if (score > (state.scores[game] || 0)) {
+      const current = this.getScore(game);
+      if (score > current) {
         state.scores[game] = score;
+        if (game === 'rooftop-cat') state.scores.rooftop = score;
+        if (game === 'rooftop') state.scores['rooftop-cat'] = score;
         save();
         emit('score:update', { game, score });
       }

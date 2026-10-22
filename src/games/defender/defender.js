@@ -37,10 +37,11 @@ export class DefenderGame extends GameBase {
     }));
 
     const { aliens, alienDir } = spawnWave(1);
+    const hi = this.store.getScore('defender') || 0;
     this.state = {
       stars, playerX: 74, lasers: [], aliens, alienDir,
       alienBullets: [], particles: [], shootTimer: 0, invulnTimer: 0,
-      lives: 3, score: 0, wave: 1, phase: 'play', anim: 0
+      lives: 3, score: 0, hiScore: hi, wave: 1, phase: 'play', anim: 0
     };
   }
 
@@ -93,6 +94,10 @@ export class DefenderGame extends GameBase {
     if (this._held.right) s.playerX = Math.min(147, s.playerX + PLAYER_SPEED * dt);
 
     updateLasers(s, dt, this._burst, this._onWaveClear);
+    if (s.score > s.hiScore) {
+      s.hiScore = s.score;
+      this.store.setScore('defender', s.score);
+    }
     updateAliens(s, dt, this._playerHit);
     updateAlienBullets(s, dt, this._playerHit);
 
@@ -109,6 +114,10 @@ export class DefenderGame extends GameBase {
     const s = this.state;
     s.wave++;
     s.score += 100;
+    if (s.score > s.hiScore) {
+      s.hiScore = s.score;
+      this.store.setScore('defender', s.score);
+    }
     emit('audio:play', 'powerup');
     const waveData = spawnWave(s.wave);
     s.aliens = waveData.aliens;

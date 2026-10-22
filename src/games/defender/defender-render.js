@@ -12,11 +12,12 @@ export function renderDefender(state) {
 
   // HUD
   drawText(`SC:${state.score}`, 4, 3, 3);
-  drawText(`W:${state.wave}`, 70, 3, 2);
-  drawText('L:', 116, 3, 2);
+  drawText(`HI:${state.hiScore || 0}`, 46, 3, 2);
+  drawText(`W:${state.wave}`, 90, 3, 2);
+  drawText('L:', 124, 3, 2);
   for (let l = 0; l < state.lives; l++) {
-    drawRect(132 + l * 8, 3, 5, 5, 3);
-    drawRect(134 + l * 8, 2, 1, 2, 3);
+    drawRect(138 + l * 7, 3, 4, 4, 3);
+    drawRect(139 + l * 7, 2, 2, 1, 3);
   }
   drawRect(0, 11, 160, 1, 1);
 
