@@ -2,11 +2,10 @@ import { FONT } from './font.js';
 
 const LOGICAL_W = 160;
 const LOGICAL_H = 144;
-const GAP_PX = 1; // 1px gap between pixels
 
 let displayCanvas, displayCtx;
-let pixelW = 1;
-let pixelH = 1;
+let pixelW = 2;
+let pixelH = 2;
 let cellW = 3;
 let cellH = 3;
 
@@ -31,13 +30,16 @@ export function recalcDimensions() {
   const availableW = wrapper.clientWidth;
   if (!availableW) return;
 
-  // Direct calculation as requested:
-  // cell width = availableW / 160
-  // pixel width = (availableW / 160) - 2px gap
-  const stepW = availableW / LOGICAL_W;
-  const pw = Math.max(1, stepW - GAP_PX);
+  // Calculate cell width across 160 logical pixels
+  const rawStep = availableW / LOGICAL_W;
+
+  // For genuine retro LCD look:
+  // If available space is larger, each LCD dot is chunky (2px to 3px) with a crisp 1px gap
+  const stepW = Math.max(2.5, rawStep);
+  const gap = 1;
+  const pw = Math.max(1.5, stepW - gap);
   const ph = pw;
-  const stepH = pw + GAP_PX;
+  const stepH = pw + gap;
 
   pixelW = pw;
   pixelH = ph;
@@ -49,8 +51,8 @@ export function recalcDimensions() {
 
   displayCanvas.width = totalW;
   displayCanvas.height = totalH;
-  displayCanvas.style.width = `${totalW}px`;
-  displayCanvas.style.height = `${totalH}px`;
+  displayCanvas.style.width = '100%';
+  displayCanvas.style.height = '100%';
 
   displayCtx.imageSmoothingEnabled = false;
   blitToDisplay();
@@ -130,9 +132,14 @@ export function blitToDisplay() {
   ];
   const gap = style.getPropertyValue('--lcd-gap').trim() || '#85a50e';
 
+  // 1. Fill entire display with gap matrix color
   displayCtx.fillStyle = gap;
   displayCtx.fillRect(0, 0, displayCanvas.width, displayCanvas.height);
 
+  const pw = Math.round(pixelW);
+  const ph = Math.round(pixelH);
+
+  // 2. Render each shade
   for (let s = 0; s < 4; s++) {
     displayCtx.fillStyle = shades[s];
     displayCtx.beginPath();
@@ -144,7 +151,7 @@ export function blitToDisplay() {
       for (let lx = 0; lx < LOGICAL_W; lx++) {
         if (vram[vramRow + lx] === s) {
           const xPos = Math.round(lx * cellW);
-          displayCtx.rect(xPos, yPos, Math.round(pixelW), Math.round(pixelH));
+          displayCtx.rect(xPos, yPos, pw, ph);
         }
       }
     }

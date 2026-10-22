@@ -19,7 +19,7 @@
   --lcd-1:         #8bac0f;   /* Light tone */
   --lcd-2:         #306230;   /* Dark tone */
   --lcd-3:         #0f380f;   /* Darkest pixel */
-  --lcd-gap:       #85a50e;   /* Inter-pixel unlit gap channel */
+  --lcd-gap:       #75900a;   /* Slightly deeper unlit pixel matrix gap */
   --power-led:     #e52521;
   --body-bg:       #18191c;
   --text:          #2c3240;
@@ -43,13 +43,13 @@
   --lcd-1:         #8b956d;
   --lcd-2:         #4d533c;
   --lcd-3:         #1f1f15;
-  --lcd-gap:       #b3bd93;
+  --lcd-gap:       #9ba47a;
   --power-led:     #00dfc2;
   --body-bg:       #0d0e11;
   --text:          #c6f6ef;
 }
 
-/* ── Warm Amber / Yellow Phosphor Retro LCD ── */
+/* ── Nostalgia Berry Red ── */
 [data-theme="ivory"] {
   --shell-bg:      #bf2642;
   --shell-shadow:  #781426;
@@ -67,7 +67,7 @@
   --lcd-1:         #a89f91;
   --lcd-2:         #706657;
   --lcd-3:         #2b261f;
-  --lcd-gap:       #cdc7b8;
+  --lcd-gap:       #b3ac9b;
   --power-led:     #ffdd33;
   --body-bg:       #19181a;
   --text:          #ffffff;
@@ -91,7 +91,7 @@
   --lcd-1:         #6b8e8e;
   --lcd-2:         #355252;
   --lcd-3:         #0c1a1a;
-  --lcd-gap:       #93b0b0;
+  --lcd-gap:       #7b9e9e;
   --power-led:     #ff3b30;
   --body-bg:       #0b0e17;
   --text:          #d5e0ff;
@@ -99,8 +99,7 @@
 
 /* ── Shared Dimensions & Typography ────────────────────────────── */
 :root {
-  --console-width-desk:  370px;
-  --console-height-desk: 640px;
+  --console-width-desk:  420px; /* Slightly wider desktop presence for chunky LCD pixels */
   --font-ui:             'Courier New', Courier, monospace;
   --font-retro:          'Lucida Console', Monaco, monospace;
   --transition-theme:    background 0.2s ease, border-color 0.2s ease;
