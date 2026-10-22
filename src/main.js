@@ -55,3 +55,12 @@ on('game:exit', () => loadGame('menu', store));
 
 // Start on main menu
 loadGame('menu', store);
+
+// Register Service Worker for PWA offline support
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => {
+      console.warn('[PWA] Service worker registration failed:', err);
+    });
+  });
+}

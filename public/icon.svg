@@ -1,0 +1,17 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'>
+    <rect width='512' height='512' rx='102.4' fill='#18191c'/>
+    <!-- Handheld Shell -->
+    <rect x='61.44' y='40.96' width='389.12' height='430.08' rx='40.96' fill='#d1d0c7' stroke='#8b8a82' stroke-width='10.24'/>
+    <!-- Screen Bezel -->
+    <rect x='102.4' y='71.68' width='307.2' height='215.04' rx='20.48' fill='#6e7077'/>
+    <!-- LCD Matrix -->
+    <rect x='128' y='92.16' width='256' height='174.08' rx='5.12' fill='#8bac0f'/>
+    <!-- Battery LED -->
+    <circle cx='122.88' cy='122.88' r='9.216' fill='#e52521'/>
+    <!-- D-Pad -->
+    <rect x='122.88' y='337.92' width='40.96' height='102.4' rx='5.12' fill='#2b2b2b'/>
+    <rect x='92.16' y='368.64' width='102.4' height='40.96' rx='5.12' fill='#2b2b2b'/>
+    <!-- Buttons -->
+    <circle cx='332.8' cy='389.12' r='25.6' fill='#9a2257'/>
+    <circle cx='389.12' cy='358.4' r='25.6' fill='#9a2257'/>
+  </svg>
