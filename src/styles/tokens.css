@@ -1,0 +1,71 @@
+/* ── Ironside (default) ─────────────────────────────────────────── */
+[data-theme="ironside"] {
+  --shell-bg:      #2a2a2d;
+  --shell-shadow:  #111113;
+  --bezel-bg:      #1a1a1c;
+  --btn-primary:   #f0a500;
+  --btn-secondary: #c88a00;
+  --btn-text:      #1a0e00;
+  --screen-bg:     #0d0f0c;
+  --screen-px:     #8bac0f;   /* amber-green phosphor pixel */
+  --screen-gap:    #0d0f0c;
+  --body-bg:       #111113;
+  --text:          #e0d8c0;
+}
+
+/* ── Phantom ────────────────────────────────────────────────────── */
+[data-theme="phantom"] {
+  --shell-bg:      #1c1c2e;
+  --shell-shadow:  #0a0a14;
+  --bezel-bg:      #0e0e1a;
+  --btn-primary:   #00e5cc;
+  --btn-secondary: #00b8a3;
+  --btn-text:      #001a18;
+  --screen-bg:     #0a0a14;
+  --screen-px:     #00e5cc;
+  --screen-gap:    #0a0a14;
+  --body-bg:       #08080f;
+  --text:          #c0f0ea;
+}
+
+/* ── Ivory ──────────────────────────────────────────────────────── */
+[data-theme="ivory"] {
+  --shell-bg:      #f0ece4;
+  --shell-shadow:  #c8c4bc;
+  --bezel-bg:      #d6d0c4;
+  --btn-primary:   #c0152a;
+  --btn-secondary: #960f20;
+  --btn-text:      #fff5f5;
+  --screen-bg:     #e8e4dc;
+  --screen-px:     #1a1a14;
+  --screen-gap:    #c8c4bc;
+  --body-bg:       #e0dcd4;
+  --text:          #1a1a14;
+}
+
+/* ── Midnight ───────────────────────────────────────────────────── */
+[data-theme="midnight"] {
+  --shell-bg:      #0d1b3e;
+  --shell-shadow:  #060e20;
+  --bezel-bg:      #091228;
+  --btn-primary:   #ffe600;
+  --btn-secondary: #ccb800;
+  --btn-text:      #1a1600;
+  --screen-bg:     #06101f;
+  --screen-px:     #ffe600;
+  --screen-gap:    #06101f;
+  --body-bg:       #060c18;
+  --text:          #e8e0a0;
+}
+
+/* ── Shared ─────────────────────────────────────────────────────── */
+:root {
+  --console-width-desk:  360px;
+  --console-height-desk: 620px;
+  --screen-width:        240px;
+  --screen-height:       216px;
+  --radius-shell:        24px;
+  --radius-screen:       8px;
+  --font-ui:             'Courier New', Courier, monospace;
+  --transition-theme:    background 0.2s ease, color 0.2s ease;
+}

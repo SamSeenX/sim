@@ -1,0 +1,12 @@
+.pv-controls-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 480px) {
+  .pv-btn-action { width: 56px; height: 56px; font-size: 16px; }
+  .pv-dpad { grid-template-columns: 44px 44px 44px; grid-template-rows: 44px 44px 44px; }
+  .pv-btn-dpad { min-width: 44px; min-height: 44px; }
+}

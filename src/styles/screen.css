@@ -1,0 +1,49 @@
+.pv-screen-bezel {
+  width: 100%;
+  background: var(--bezel-bg);
+  border-radius: var(--radius-screen);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 8px var(--shell-shadow);
+  transition: var(--transition-theme);
+}
+
+.pv-screen-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 160 / 144;
+  background: var(--screen-bg);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pv-canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: block;
+}
+
+/* Scanline overlay */
+.pv-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 1px,
+    rgba(0,0,0,0.08) 1px,
+    rgba(0,0,0,0.08) 2px
+  );
+  pointer-events: none;
+  border-radius: 4px;
+}
+
+@media (max-width: 480px) {
+  .pv-screen-bezel { padding: 8px; }
+  .pv-screen-wrapper { width: 100%; }
+}
