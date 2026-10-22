@@ -3,7 +3,7 @@ import { clearScreen, drawText, drawRect, getLogicalW, getLogicalH } from '../co
 import { on, off, emit } from '../core/event-bus.js';
 import { loadGame } from '../main.js';
 
-const GAMES = ['BOUNCER', 'BLOCKFALL', 'ROOFTOP CAT', 'SNAKE', 'DEFENDER'];
+const GAMES = ['BOUNCER', 'BLOCKFALL', 'ROOFTOP CAT', 'SNAKE', 'DEFENDER', 'PIXEL DRIFT'];
 
 export class MenuGame extends GameBase {
   constructor(store) {
@@ -40,32 +40,32 @@ export class MenuGame extends GameBase {
     clearScreen();
 
     // Authentic retro banner
-    drawRect(10, 8, W - 20, 20, 3);
-    drawRect(12, 10, W - 24, 16, 0);
-    drawText('PIXELVAULT', 32, 15, 3);
+    drawRect(10, 6, W - 20, 18, 3);
+    drawRect(12, 8, W - 24, 14, 0);
+    drawText('PIXELVAULT', 32, 13, 3);
 
     // Game menu items
     GAMES.forEach((name, i) => {
-      const y = 36 + i * 16;
+      const y = 30 + i * 14;
       const selected = i === this.cursor;
       const key = name.toLowerCase().replace(' ', '-');
       const hi = this.store.getScore(key) || 0;
 
       if (selected) {
-        drawRect(14, y - 2, W - 28, 13, 2);
-        drawRect(16, y, W - 32, 9, 0);
+        drawRect(14, y - 2, W - 28, 12, 2);
+        drawRect(16, y, W - 32, 8, 0);
         if (Math.floor(this.blink * 3) % 2 === 0) {
-          drawText('>', 19, y + 1, 3);
+          drawText('>', 18, y + 1, 3);
         }
-        drawText(name, 26, y + 1, 3);
-        drawText(`HI:${hi}`, 102, y + 1, 3);
+        drawText(name, 25, y + 1, 3);
+        drawText(`HI:${hi}`, 104, y + 1, 3);
       } else {
-        drawText(name, 26, y + 1, 2);
-        drawText(`HI:${hi}`, 102, y + 1, 1);
+        drawText(name, 25, y + 1, 2);
+        drawText(`HI:${hi}`, 104, y + 1, 1);
       }
     });
 
-    drawRect(10, H - 20, W - 20, 1, 2);
-    drawText('A:PLAY  ARROWS:NAV', 18, H - 12, 3);
+    drawRect(10, H - 18, W - 20, 1, 2);
+    drawText('A:PLAY  ARROWS:NAV', 18, H - 11, 3);
   }
 }

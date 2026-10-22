@@ -79,6 +79,10 @@ export function playSound(name) {
     });
   } else if (name === 'laser') {
     playPitchSlide(ac, t, 900, 220, 0.08, 'sawtooth', 0.09);
+  } else if (name === 'boost') {
+    playPitchSlide(ac, t, 180, 420, 0.12, 'sawtooth', 0.08);
+  } else if (name === 'screech') {
+    playPitchSlide(ac, t, 600, 300, 0.09, 'triangle', 0.08);
   } else if (name === 'gameover') {
     [392, 349.23, 311.13, 261.63].forEach((f, i) => {
       playTone(ac, t + i * 0.1, f, 0.14, 'square', 0.12);

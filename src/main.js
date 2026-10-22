@@ -70,6 +70,14 @@ export function loadGame(name, s) {
     });
     return;
   }
+
+  if (name === 'pixel-drift') {
+    import('./games/drift/drift.js').then(m => {
+      activeGame = new m.DriftGame(currentStore);
+      activeGame.start();
+    });
+    return;
+  }
 }
 
 on('game:exit', () => loadGame('menu', store));
