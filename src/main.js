@@ -10,6 +10,11 @@ initAudio();
 const store = initStore();
 initShell(store);
 
+// Request persistent storage for durability
+if (navigator.storage && navigator.storage.persist) {
+  navigator.storage.persist().catch(() => {});
+}
+
 let activeGame = null;
 
 export function loadGame(name, s) {
@@ -49,6 +54,22 @@ export function loadGame(name, s) {
     });
     return;
   }
+
+  if (name === 'snake') {
+    import('./games/snake/snake.js').then(m => {
+      activeGame = new m.SnakeGame(currentStore);
+      activeGame.start();
+    });
+    return;
+  }
+
+  if (name === 'defender') {
+    import('./games/defender/defender.js').then(m => {
+      activeGame = new m.DefenderGame(currentStore);
+      activeGame.start();
+    });
+    return;
+  }
 }
 
 on('game:exit', () => loadGame('menu', store));
@@ -56,8 +77,8 @@ on('game:exit', () => loadGame('menu', store));
 // Start on main menu
 loadGame('menu', store);
 
-// Register Service Worker for PWA offline support
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
+// Register Service Worker for PWA offline capability
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(err => {
       console.warn('[PWA] Service worker registration failed:', err);

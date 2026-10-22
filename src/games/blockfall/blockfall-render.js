@@ -17,7 +17,6 @@ export function renderBlockFall(state) {
         const x = FIELD_X + c * CELL;
         const y = FIELD_Y + r * CELL;
         drawRect(x, y, CELL, CELL, shade);
-        // Authentic block inner rim
         drawRect(x + 1, y + 1, CELL - 2, CELL - 2, 0);
         drawRect(x + 2, y + 2, CELL - 4, CELL - 4, shade);
       }
@@ -38,17 +37,46 @@ export function renderBlockFall(state) {
     });
   }
 
-  // HUD
+  // HUD: Score and Level
   drawText('SC', HUD_X, FIELD_Y, 2);
-  drawText(String(state.score), HUD_X, FIELD_Y + 10, 3);
-  drawText('LV', HUD_X, FIELD_Y + 28, 2);
-  drawText(String(state.level), HUD_X, FIELD_Y + 38, 3);
+  drawText(String(state.score), HUD_X, FIELD_Y + 9, 3);
+  drawText('LV', HUD_X, FIELD_Y + 23, 2);
+  drawText(String(state.level), HUD_X, FIELD_Y + 32, 3);
+
+  // HUD: Next Piece Preview Box
+  drawText('NEXT', HUD_X, FIELD_Y + 47, 2);
+  const boxX = HUD_X - 1;
+  const boxY = FIELD_Y + 56;
+  const boxW = 38;
+  const boxH = 26;
+  drawRect(boxX, boxY, boxW, boxH, 2);
+  drawRect(boxX + 1, boxY + 1, boxW - 2, boxH - 2, 0);
+
+  if (state.next) {
+    const pCell = 5;
+    const shape = state.next.shape;
+    const pw = shape[0].length * pCell;
+    const ph = shape.length * pCell;
+    const ox = boxX + 1 + Math.floor((boxW - 2 - pw) / 2);
+    const oy = boxY + 1 + Math.floor((boxH - 2 - ph) / 2);
+
+    shape.forEach((row, ri) => {
+      row.forEach((v, ci) => {
+        if (!v) return;
+        const bx = ox + ci * pCell;
+        const by = oy + ri * pCell;
+        drawRect(bx, by, pCell, pCell, 3);
+        drawRect(bx + 1, by + 1, pCell - 2, pCell - 2, 0);
+        drawRect(bx + 2, by + 2, pCell - 4, pCell - 4, 3);
+      });
+    });
+  }
 
   if (state.phase === 'paused') {
-    drawText('PAUSE', HUD_X, FIELD_Y + 54, 3);
+    drawText('PAUSE', HUD_X, FIELD_Y + 92, 3);
   }
   if (state.phase === 'gameover') {
-    drawText('OVER', HUD_X, FIELD_Y + 60, 3);
-    drawText('B:MNU', HUD_X, FIELD_Y + 74, 2);
+    drawText('OVER', HUD_X, FIELD_Y + 90, 3);
+    drawText('B:MNU', HUD_X, FIELD_Y + 104, 2);
   }
 }

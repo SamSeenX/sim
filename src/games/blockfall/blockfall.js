@@ -72,8 +72,7 @@ export class BlockFallGame extends GameBase {
     if (a === 'left')  this._move(0, -1);
     if (a === 'right') this._move(0,  1);
     if (a === 'down')  this._move(1,  0);
-    if (a === 'up')    this._tryRotate();
-    if (a === 'a')     this._hardDrop();
+    if (a === 'a' || a === 'up') this._tryRotate();
     if (a === 'b' || a === 'select') emit('game:exit');
   }
 
@@ -93,13 +92,17 @@ export class BlockFallGame extends GameBase {
     if (this._fits(rotated, p.row, p.col)) {
       p.shape = rotated;
       emit('audio:play', 'rotate');
+      return;
     }
-  }
-
-  _hardDrop() {
-    while (this._move(1, 0)) {}
-    emit('audio:play', 'drop');
-    this._lock();
+    // Wall kicks for smooth rotation near edges
+    for (const offset of [-1, 1, -2, 2]) {
+      if (this._fits(rotated, p.row, p.col + offset)) {
+        p.col += offset;
+        p.shape = rotated;
+        emit('audio:play', 'rotate');
+        return;
+      }
+    }
   }
 
   _fits(shape, row, col) {

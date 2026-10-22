@@ -77,6 +77,8 @@ export function playSound(name) {
     [330, 440, 554.37, 659.25].forEach((f, i) => {
       playTone(ac, t + i * 0.04, f, 0.06, 'square', 0.1);
     });
+  } else if (name === 'laser') {
+    playPitchSlide(ac, t, 900, 220, 0.08, 'sawtooth', 0.09);
   } else if (name === 'gameover') {
     [392, 349.23, 311.13, 261.63].forEach((f, i) => {
       playTone(ac, t + i * 0.1, f, 0.14, 'square', 0.12);
