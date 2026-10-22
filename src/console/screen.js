@@ -1,11 +1,16 @@
+import { FONT } from './font.js';
+
 const LOGICAL_W = 160;
 const LOGICAL_H = 144;
-const PIXEL_SCALE = 2; // 2 physical display pixels per logical pixel
-const GAP_SIZE = 1;    // 1 physical display pixel gap (33% gap ratio, matching original dot-matrix LCD)
-const CELL_SIZE = PIXEL_SCALE + GAP_SIZE; // 3px total per logical pixel
+const GAP_PX = 2; // 2px gap between pixels
 
 let displayCanvas, displayCtx;
-let activeScale = 1;
+let pixelW = 1;
+let pixelH = 1;
+let cellW = 3;
+let cellH = 3;
+
+// 160 x 144 typed array holding direct shade indices: 0, 1, 2, or 3
 const vram = new Uint8Array(LOGICAL_W * LOGICAL_H);
 
 export function initScreen() {
@@ -13,30 +18,39 @@ export function initScreen() {
   displayCtx = displayCanvas.getContext('2d', { alpha: false });
   displayCtx.imageSmoothingEnabled = false;
 
-  recalcIntegerScale();
-  window.addEventListener('resize', recalcIntegerScale);
+  recalcDimensions();
+  window.addEventListener('resize', recalcDimensions);
 
   clearScreen();
 }
 
-export function recalcIntegerScale() {
+export function recalcDimensions() {
   const wrapper = document.querySelector('.pv-screen-wrapper');
   if (!wrapper || !displayCanvas) return;
 
-  const w = wrapper.clientWidth;
-  const h = wrapper.clientHeight;
+  const availableW = wrapper.clientWidth;
+  if (!availableW) return;
 
-  // Find exact integer multiplier k so that display pixels map 1:1 without Moiré subpixel distortion
-  const nativeW = LOGICAL_W * CELL_SIZE; // 480px
-  const nativeH = LOGICAL_H * CELL_SIZE; // 432px
+  // Direct calculation as requested:
+  // cell width = availableW / 160
+  // pixel width = (availableW / 160) - 2px gap
+  const stepW = availableW / LOGICAL_W;
+  const pw = Math.max(1, stepW - GAP_PX);
+  const ph = pw;
+  const stepH = pw + GAP_PX;
 
-  const k = Math.max(1, Math.floor(Math.min(w / nativeW, h / nativeH)));
-  activeScale = k;
+  pixelW = pw;
+  pixelH = ph;
+  cellW = stepW;
+  cellH = stepH;
 
-  displayCanvas.width = nativeW * k;
-  displayCanvas.height = nativeH * k;
-  displayCanvas.style.width = `${displayCanvas.width}px`;
-  displayCanvas.style.height = `${displayCanvas.height}px`;
+  const totalW = Math.round(stepW * LOGICAL_W);
+  const totalH = Math.round(stepH * LOGICAL_H);
+
+  displayCanvas.width = totalW;
+  displayCanvas.height = totalH;
+  displayCanvas.style.width = `${totalW}px`;
+  displayCanvas.style.height = `${totalH}px`;
 
   displayCtx.imageSmoothingEnabled = false;
   blitToDisplay();
@@ -104,111 +118,40 @@ export function drawText(text, lx, ly, shade = 3) {
   }
 }
 
-function parseHex(hex) {
-  const c = hex.replace('#', '');
-  return [
-    parseInt(c.substring(0, 2), 16),
-    parseInt(c.substring(2, 4), 16),
-    parseInt(c.substring(4, 6), 16)
-  ];
-}
-
 export function blitToDisplay() {
   if (!displayCtx || !displayCanvas) return;
 
   const style = getComputedStyle(document.documentElement);
-  const rawShades = [
+  const shades = [
     style.getPropertyValue('--lcd-0').trim() || '#9bbc0f',
     style.getPropertyValue('--lcd-1').trim() || '#8bac0f',
     style.getPropertyValue('--lcd-2').trim() || '#306230',
     style.getPropertyValue('--lcd-3').trim() || '#0f380f',
   ];
-  const rawGap = style.getPropertyValue('--lcd-gap').trim() || '#85a50e';
+  const gap = style.getPropertyValue('--lcd-gap').trim() || '#85a50e';
 
-  const shades = rawShades.map(parseHex);
-  const gap = parseHex(rawGap);
+  displayCtx.fillStyle = gap;
+  displayCtx.fillRect(0, 0, displayCanvas.width, displayCanvas.height);
 
-  const k = activeScale || 1;
-  const dispW = displayCanvas.width;
-  const dispH = displayCanvas.height;
+  for (let s = 0; s < 4; s++) {
+    displayCtx.fillStyle = shades[s];
+    displayCtx.beginPath();
 
-  const imgData = displayCtx.createImageData(dispW, dispH);
-  const d32 = new Uint32Array(imgData.data.buffer);
+    for (let ly = 0; ly < LOGICAL_H; ly++) {
+      const vramRow = ly * LOGICAL_W;
+      const yPos = Math.round(ly * cellH);
 
-  const gapU32 = (255 << 24) | (gap[2] << 16) | (gap[1] << 8) | gap[0];
-  const shadesU32 = shades.map(s => (255 << 24) | (s[2] << 16) | (s[1] << 8) | s[0]);
-
-  // Unlit gap background
-  d32.fill(gapU32);
-
-  const pixelDim = PIXEL_SCALE * k;
-  const cellDim = CELL_SIZE * k;
-
-  // Blit each logical pixel as an exact pixel block leaving the gap channel intact
-  for (let ly = 0; ly < LOGICAL_H; ly++) {
-    const vramRow = ly * LOGICAL_W;
-    const baseRowY = ly * cellDim;
-
-    for (let lx = 0; lx < LOGICAL_W; lx++) {
-      const shadeVal = vram[vramRow + lx];
-      const colorU32 = shadesU32[shadeVal];
-      const baseColX = lx * cellDim;
-
-      for (let dy = 0; dy < pixelDim; dy++) {
-        const lineOffset = (baseRowY + dy) * dispW + baseColX;
-        for (let dx = 0; dx < pixelDim; dx++) {
-          d32[lineOffset + dx] = colorU32;
+      for (let lx = 0; lx < LOGICAL_W; lx++) {
+        if (vram[vramRow + lx] === s) {
+          const xPos = Math.round(lx * cellW);
+          displayCtx.rect(xPos, yPos, Math.round(pixelW), Math.round(pixelH));
         }
       }
     }
-  }
 
-  displayCtx.putImageData(imgData, 0, 0);
+    displayCtx.fill();
+  }
 }
 
 export function getLogicalW() { return LOGICAL_W; }
 export function getLogicalH() { return LOGICAL_H; }
-
-const FONT = {
-  'A':[[0,1,1,0],[1,0,0,1],[1,1,1,1],[1,0,0,1],[1,0,0,1]],
-  'B':[[1,1,1,0],[1,0,0,1],[1,1,1,0],[1,0,0,1],[1,1,1,0]],
-  'C':[[0,1,1,1],[1,0,0,0],[1,0,0,0],[1,0,0,0],[0,1,1,1]],
-  'D':[[1,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,1,1,0]],
-  'E':[[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,1,1,1]],
-  'F':[[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,0,0,0]],
-  'G':[[0,1,1,1],[1,0,0,0],[1,0,1,1],[1,0,0,1],[0,1,1,1]],
-  'H':[[1,0,0,1],[1,0,0,1],[1,1,1,1],[1,0,0,1],[1,0,0,1]],
-  'I':[[1,1,1],[0,1,0],[0,1,0],[0,1,0],[1,1,1]],
-  'J':[[0,0,1],[0,0,1],[0,0,1],[1,0,1],[0,1,1]],
-  'K':[[1,0,0,1],[1,0,1,0],[1,1,0,0],[1,0,1,0],[1,0,0,1]],
-  'L':[[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,1,1,1]],
-  'M':[[1,0,0,0,1],[1,1,0,1,1],[1,0,1,0,1],[1,0,0,0,1],[1,0,0,0,1]],
-  'N':[[1,0,0,1],[1,1,0,1],[1,0,1,1],[1,0,0,1],[1,0,0,1]],
-  'O':[[0,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[0,1,1,0]],
-  'P':[[1,1,1,0],[1,0,0,1],[1,1,1,0],[1,0,0,0],[1,0,0,0]],
-  'Q':[[0,1,1,0],[1,0,0,1],[1,0,1,1],[1,0,0,1],[0,1,1,1]],
-  'R':[[1,1,1,0],[1,0,0,1],[1,1,1,0],[1,0,1,0],[1,0,0,1]],
-  'S':[[0,1,1,1],[1,0,0,0],[0,1,1,0],[0,0,0,1],[1,1,1,0]],
-  'T':[[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]],
-  'U':[[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[0,1,1,0]],
-  'V':[[1,0,0,0,1],[1,0,0,0,1],[0,1,0,1,0],[0,1,0,1,0],[0,0,1,0,0]],
-  'W':[[1,0,0,0,1],[1,0,0,0,1],[1,0,1,0,1],[1,1,0,1,1],[1,0,0,0,1]],
-  'X':[[1,0,0,1],[1,0,0,1],[0,1,1,0],[1,0,0,1],[1,0,0,1]],
-  'Y':[[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]],
-  'Z':[[1,1,1,1],[0,0,1,0],[0,1,0,0],[1,0,0,0],[1,1,1,1]],
-  '0':[[0,1,1,0],[1,0,0,1],[1,0,1,1],[1,1,0,1],[0,1,1,0]],
-  '1':[[0,1,0],[1,1,0],[0,1,0],[0,1,0],[1,1,1]],
-  '2':[[1,1,1,0],[0,0,0,1],[0,1,1,0],[1,0,0,0],[1,1,1,1]],
-  '3':[[1,1,1,0],[0,0,0,1],[0,1,1,0],[0,0,0,1],[1,1,1,0]],
-  '4':[[1,0,0,1],[1,0,0,1],[1,1,1,1],[0,0,0,1],[0,0,0,1]],
-  '5':[[1,1,1,1],[1,0,0,0],[1,1,1,0],[0,0,0,1],[1,1,1,0]],
-  '6':[[0,1,1,0],[1,0,0,0],[1,1,1,0],[1,0,0,1],[0,1,1,0]],
-  '7':[[1,1,1,1],[0,0,0,1],[0,0,1,0],[0,1,0,0],[0,1,0,0]],
-  '8':[[0,1,1,0],[1,0,0,1],[0,1,1,0],[1,0,0,1],[0,1,1,0]],
-  '9':[[0,1,1,0],[1,0,0,1],[0,1,1,1],[0,0,0,1],[0,1,1,0]],
-  ':':[[0],[1],[0],[1],[0]],
-  '!':[[1],[1],[1],[0],[1]],
-  '-':[[0,0,0],[0,0,0],[1,1,1],[0,0,0],[0,0,0]],
-  '>':[[1,0],[0,1],[1,0]],
-  ' ':[[0,0,0]],
-};
