@@ -3,10 +3,12 @@ const LOGICAL_H = 144;
 
 let canvas, ctx;
 let displayCanvas, displayCtx;
-let bufferImageData, bufferU32;
 
 export function initScreen() {
   displayCanvas = document.getElementById('pv-canvas');
+  displayCanvas.width = LOGICAL_W;
+  displayCanvas.height = LOGICAL_H;
+
   displayCtx = displayCanvas.getContext('2d', { alpha: false });
   displayCtx.imageSmoothingEnabled = false;
 
@@ -16,29 +18,7 @@ export function initScreen() {
   ctx = canvas.getContext('2d', { willReadFrequently: true });
   ctx.imageSmoothingEnabled = false;
 
-  bufferImageData = ctx.createImageData(LOGICAL_W, LOGICAL_H);
-  bufferU32 = new Uint32Array(bufferImageData.data.buffer);
-
-  recalcScale();
-  window.addEventListener('resize', recalcScale);
   clearScreen();
-}
-
-function recalcScale() {
-  const wrapper = document.querySelector('.pv-screen-wrapper');
-  if (!wrapper || !displayCanvas) return;
-
-  const w = wrapper.clientWidth;
-  const h = wrapper.clientHeight;
-  const scale = Math.max(1, Math.floor(Math.min(w / LOGICAL_W, h / LOGICAL_H)));
-
-  displayCanvas.width = LOGICAL_W * scale;
-  displayCanvas.height = LOGICAL_H * scale;
-  displayCanvas.style.width = `${displayCanvas.width}px`;
-  displayCanvas.style.height = `${displayCanvas.height}px`;
-
-  displayCtx.imageSmoothingEnabled = false;
-  blitToDisplay();
 }
 
 export function drawPixel(lx, ly, color) {
@@ -88,11 +68,7 @@ export function drawText(text, lx, ly, color) {
 
 export function blitToDisplay() {
   if (!displayCtx || !displayCanvas) return;
-  displayCtx.drawImage(
-    canvas,
-    0, 0, LOGICAL_W, LOGICAL_H,
-    0, 0, displayCanvas.width, displayCanvas.height
-  );
+  displayCtx.drawImage(canvas, 0, 0);
 }
 
 export function getCanvas() { return canvas; }
