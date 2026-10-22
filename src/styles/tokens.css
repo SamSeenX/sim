@@ -1,71 +1,96 @@
-/* ── Ironside (default) ─────────────────────────────────────────── */
+/* ── Classic 1989 (Iconic retro DMG gray, magenta buttons, olive LCD) ─ */
 [data-theme="ironside"] {
-  --shell-bg:      #2a2a2d;
-  --shell-shadow:  #111113;
-  --bezel-bg:      #1a1a1c;
-  --btn-primary:   #f0a500;
-  --btn-secondary: #c88a00;
-  --btn-text:      #1a0e00;
-  --screen-bg:     #0d0f0c;
-  --screen-px:     #8bac0f;   /* amber-green phosphor pixel */
-  --screen-gap:    #0d0f0c;
-  --body-bg:       #111113;
-  --text:          #e0d8c0;
+  --shell-bg:      #d1d0c7;
+  --shell-shadow:  #8b8a82;
+  --shell-rim:     #e4e3da;
+  --bezel-bg:      #6e7077;
+  --bezel-border:  #4f5158;
+  --bezel-lens:    #7b7d85;
+  --btn-primary:   #9a2257;   /* Burgundy/magenta A/B */
+  --btn-secondary: #6e153c;
+  --btn-text:      #ffffff;
+  --btn-dpad:      #2b2b2b;
+  --btn-dpad-hi:   #404040;
+  --btn-sys:       #8a8c92;
+  --screen-bg:     #8f9e21;   /* Classic 4-shade greenish olive LCD */
+  --screen-px:     #1d2b0e;   /* Deep olive dark pixel */
+  --screen-gap:    #82911d;
+  --power-led:     #e52521;
+  --body-bg:       #18191c;
+  --text:          #2c3240;
 }
 
-/* ── Phantom ────────────────────────────────────────────────────── */
+/* ── Stealth Black ─────────────────────────────────────────────── */
 [data-theme="phantom"] {
-  --shell-bg:      #1c1c2e;
-  --shell-shadow:  #0a0a14;
-  --bezel-bg:      #0e0e1a;
-  --btn-primary:   #00e5cc;
-  --btn-secondary: #00b8a3;
-  --btn-text:      #001a18;
-  --screen-bg:     #0a0a14;
-  --screen-px:     #00e5cc;
-  --screen-gap:    #0a0a14;
-  --body-bg:       #08080f;
-  --text:          #c0f0ea;
+  --shell-bg:      #222429;
+  --shell-shadow:  #111215;
+  --shell-rim:     #35383f;
+  --bezel-bg:      #16171a;
+  --bezel-border:  #0d0e10;
+  --bezel-lens:    #1c1d22;
+  --btn-primary:   #00dfc2;
+  --btn-secondary: #00a892;
+  --btn-text:      #081916;
+  --btn-dpad:      #121316;
+  --btn-dpad-hi:   #25272d;
+  --btn-sys:       #363840;
+  --screen-bg:     #0c1412;
+  --screen-px:     #00dfc2;
+  --screen-gap:    #070c0b;
+  --power-led:     #00dfc2;
+  --body-bg:       #0d0e11;
+  --text:          #c6f6ef;
 }
 
-/* ── Ivory ──────────────────────────────────────────────────────── */
+/* ── Nostalgia Berry Red ────────────────────────────────────────── */
 [data-theme="ivory"] {
-  --shell-bg:      #f0ece4;
-  --shell-shadow:  #c8c4bc;
-  --bezel-bg:      #d6d0c4;
-  --btn-primary:   #c0152a;
-  --btn-secondary: #960f20;
-  --btn-text:      #fff5f5;
-  --screen-bg:     #e8e4dc;
-  --screen-px:     #1a1a14;
-  --screen-gap:    #c8c4bc;
-  --body-bg:       #e0dcd4;
-  --text:          #1a1a14;
+  --shell-bg:      #bf2642;
+  --shell-shadow:  #781426;
+  --shell-rim:     #d73d5a;
+  --bezel-bg:      #30343f;
+  --bezel-border:  #1c1e24;
+  --bezel-lens:    #3e4350;
+  --btn-primary:   #22252a;
+  --btn-secondary: #14161a;
+  --btn-text:      #f0ece4;
+  --btn-dpad:      #22252a;
+  --btn-dpad-hi:   #343840;
+  --btn-sys:       #202226;
+  --screen-bg:     #9ea832;
+  --screen-px:     #1e2508;
+  --screen-gap:    #8e972c;
+  --power-led:     #ffdd33;
+  --body-bg:       #19181a;
+  --text:          #ffffff;
 }
 
-/* ── Midnight ───────────────────────────────────────────────────── */
+/* ── Clear Glacier (Translucent blue-violet vibe) ──────────────── */
 [data-theme="midnight"] {
-  --shell-bg:      #0d1b3e;
-  --shell-shadow:  #060e20;
-  --bezel-bg:      #091228;
-  --btn-primary:   #ffe600;
-  --btn-secondary: #ccb800;
-  --btn-text:      #1a1600;
-  --screen-bg:     #06101f;
-  --screen-px:     #ffe600;
-  --screen-gap:    #06101f;
-  --body-bg:       #060c18;
-  --text:          #e8e0a0;
+  --shell-bg:      #3d4e80;
+  --shell-shadow:  #242f50;
+  --shell-rim:     #5268aa;
+  --bezel-bg:      #1f263d;
+  --bezel-border:  #121624;
+  --bezel-lens:    #283250;
+  --btn-primary:   #ffb833;
+  --btn-secondary: #cf8c17;
+  --btn-text:      #1d1600;
+  --btn-dpad:      #1d243a;
+  --btn-dpad-hi:   #2f3a5e;
+  --btn-sys:       #2f3b60;
+  --screen-bg:     #1a243b;
+  --screen-px:     #ffd84d;
+  --screen-gap:    #121929;
+  --power-led:     #ff3b30;
+  --body-bg:       #0b0e17;
+  --text:          #d5e0ff;
 }
 
-/* ── Shared ─────────────────────────────────────────────────────── */
+/* ── Shared Dimensions & Typography ────────────────────────────── */
 :root {
-  --console-width-desk:  360px;
-  --console-height-desk: 620px;
-  --screen-width:        240px;
-  --screen-height:       216px;
-  --radius-shell:        24px;
-  --radius-screen:       8px;
+  --console-width-desk:  370px;
+  --console-height-desk: 640px;
   --font-ui:             'Courier New', Courier, monospace;
-  --transition-theme:    background 0.2s ease, color 0.2s ease;
+  --font-retro:          'Lucida Console', Monaco, monospace;
+  --transition-theme:    background 0.2s ease, border-color 0.2s ease;
 }

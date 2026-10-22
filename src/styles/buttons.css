@@ -1,0 +1,121 @@
+/* ── Slanted A/B Button Capsule ─────────────────────────────────────── */
+.pv-action-pod {
+  transform: rotate(-25deg);
+  margin-top: -8px;
+}
+.pv-action-pill {
+  background: rgba(0, 0, 0, 0.12);
+  padding: 6px 8px;
+  border-radius: 34px;
+  display: flex;
+  gap: 16px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,0.3);
+}
+.pv-action-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.pv-btn-action {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--btn-primary);
+  color: var(--btn-text);
+  font-family: var(--font-retro);
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 4px 0 var(--btn-secondary), 0 6px 6px rgba(0,0,0,0.35);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.06s;
+}
+.pv-btn-action:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--btn-secondary);
+}
+.pv-action-label {
+  font-family: var(--font-retro);
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--text);
+  opacity: 0.8;
+  transform: rotate(25deg);
+}
+
+/* ── Angled Rubber Select / Start ───────────────────────────────────── */
+.pv-sys-row {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 10px;
+}
+.pv-sys-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transform: rotate(-26deg);
+}
+.pv-btn-sys {
+  width: 40px;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--btn-sys);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #1b1c20, 0 3px 4px rgba(0,0,0,0.4);
+}
+.pv-btn-sys:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.pv-sys-label {
+  font-family: var(--font-retro);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+/* ── Diagonal Speaker Slits & Theme Dock ────────────────────────────── */
+.pv-lower-deck {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding: 0 6px;
+}
+.pv-theme-dock {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.pv-speaker-grill {
+  display: flex;
+  gap: 6px;
+  transform: rotate(-28deg);
+  opacity: 0.45;
+}
+.pv-speaker-grill span {
+  width: 4px;
+  height: 38px;
+  background: var(--shell-shadow);
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.6);
+}
+
+.pv-phone-jack-hint {
+  font-family: var(--font-retro);
+  font-size: 7px;
+  letter-spacing: 0.15em;
+  opacity: 0.4;
+  margin-top: -6px;
+}

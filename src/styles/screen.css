@@ -1,13 +1,66 @@
 .pv-screen-bezel {
   width: 100%;
   background: var(--bezel-bg);
-  border-radius: var(--radius-screen);
-  padding: 12px;
+  border: 4px solid var(--bezel-border);
+  border-radius: 12px 12px 32px 12px;
+  padding: 18px 18px 14px 18px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 2px 8px var(--shell-shadow);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(255, 255, 255, 0.1);
   transition: var(--transition-theme);
+  position: relative;
+}
+
+/* Bezel header details: Battery LED & authentic stripe */
+.pv-bezel-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.pv-battery-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pv-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--power-led);
+  box-shadow: 0 0 6px var(--power-led), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  animation: pv-led-glow 2s infinite alternate ease-in-out;
+}
+
+@keyframes pv-led-glow {
+  0% { opacity: 0.85; }
+  100% { opacity: 1; }
+}
+
+.pv-led-label {
+  font-family: var(--font-retro);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: #adb0b8;
+  font-weight: 700;
+}
+
+.pv-bezel-stripes {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 60px;
+}
+.pv-bezel-stripes span {
+  height: 2px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 1px;
 }
 
 .pv-screen-wrapper {
@@ -15,11 +68,13 @@
   width: 100%;
   aspect-ratio: 160 / 144;
   background: var(--screen-bg);
+  border: 3px solid rgba(0, 0, 0, 0.6);
   border-radius: 4px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
 }
 
 #pv-canvas {
@@ -28,22 +83,33 @@
   display: block;
 }
 
-/* Scanline overlay */
-.pv-scanlines {
+/* Authentic LCD Dot-Matrix Grid with Light Pixel Gap */
+.pv-pixel-grid {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 1px,
-    rgba(0,0,0,0.08) 1px,
-    rgba(0,0,0,0.08) 2px
-  );
+  background-size: 4px 4px;
+  background-image:
+    linear-gradient(to right, transparent 3px, rgba(0, 0, 0, 0.22) 3px),
+    linear-gradient(to bottom, transparent 3px, rgba(0, 0, 0, 0.22) 3px);
   pointer-events: none;
-  border-radius: 4px;
+  z-index: 2;
 }
 
-@media (max-width: 480px) {
-  .pv-screen-bezel { padding: 8px; }
-  .pv-screen-wrapper { width: 100%; }
+/* Subtle CRT curved glass sheen */
+.pv-screen-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 70%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+@media (max-width: 600px) {
+  .pv-screen-bezel {
+    padding: 12px 14px 10px 14px;
+    border-radius: 8px 8px 24px 8px;
+  }
 }

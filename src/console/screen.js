@@ -1,53 +1,63 @@
 const LOGICAL_W = 160;
 const LOGICAL_H = 144;
-const PIXEL_GAP = 1;
 
-let canvas, ctx, pixelSize;
+let canvas, ctx;
+let displayCanvas, displayCtx;
+let bufferImageData, bufferU32;
 
 export function initScreen() {
-  canvas = document.getElementById('pv-canvas');
-  ctx = canvas.getContext('2d');
+  displayCanvas = document.getElementById('pv-canvas');
+  displayCtx = displayCanvas.getContext('2d', { alpha: false });
+  displayCtx.imageSmoothingEnabled = false;
+
+  canvas = document.createElement('canvas');
+  canvas.width = LOGICAL_W;
+  canvas.height = LOGICAL_H;
+  ctx = canvas.getContext('2d', { willReadFrequently: true });
   ctx.imageSmoothingEnabled = false;
+
+  bufferImageData = ctx.createImageData(LOGICAL_W, LOGICAL_H);
+  bufferU32 = new Uint32Array(bufferImageData.data.buffer);
+
   recalcScale();
   window.addEventListener('resize', recalcScale);
   clearScreen();
 }
 
 function recalcScale() {
-  const bezel = document.querySelector('.pv-screen-wrapper');
-  if (!bezel) return;
-  const bw = bezel.clientWidth;
-  const bh = bezel.clientHeight;
-  pixelSize = Math.floor(Math.min(bw / LOGICAL_W, bh / LOGICAL_H));
-  if (pixelSize < 1) pixelSize = 1;
-  const physW = LOGICAL_W * (pixelSize + PIXEL_GAP);
-  const physH = LOGICAL_H * (pixelSize + PIXEL_GAP);
-  canvas.width = physW;
-  canvas.height = physH;
-  canvas.style.width  = physW + 'px';
-  canvas.style.height = physH + 'px';
+  const wrapper = document.querySelector('.pv-screen-wrapper');
+  if (!wrapper || !displayCanvas) return;
+
+  const w = wrapper.clientWidth;
+  const h = wrapper.clientHeight;
+  const scale = Math.max(1, Math.floor(Math.min(w / LOGICAL_W, h / LOGICAL_H)));
+
+  displayCanvas.width = LOGICAL_W * scale;
+  displayCanvas.height = LOGICAL_H * scale;
+  displayCanvas.style.width = `${displayCanvas.width}px`;
+  displayCanvas.style.height = `${displayCanvas.height}px`;
+
+  displayCtx.imageSmoothingEnabled = false;
+  blitToDisplay();
 }
 
 export function drawPixel(lx, ly, color) {
+  if (lx < 0 || lx >= LOGICAL_W || ly < 0 || ly >= LOGICAL_H) return;
   ctx.fillStyle = color;
-  const px = lx * (pixelSize + PIXEL_GAP);
-  const py = ly * (pixelSize + PIXEL_GAP);
-  ctx.fillRect(px, py, pixelSize, pixelSize);
+  ctx.fillRect(lx, ly, 1, 1);
 }
 
 export function clearScreen() {
   const style = getComputedStyle(document.documentElement);
-  const gap   = style.getPropertyValue('--screen-gap').trim() || '#0d0f0c';
-  ctx.fillStyle = gap;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const bg = style.getPropertyValue('--screen-bg').trim() || '#8f9e21';
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+  blitToDisplay();
 }
 
 export function drawRect(lx, ly, lw, lh, color) {
-  for (let y = ly; y < ly + lh; y++) {
-    for (let x = lx; x < lx + lw; x++) {
-      drawPixel(x, y, color);
-    }
-  }
+  ctx.fillStyle = color;
+  ctx.fillRect(lx, ly, lw, lh);
 }
 
 export function drawSprite(sprite, lx, ly) {
@@ -74,6 +84,15 @@ export function drawText(text, lx, ly, color) {
       cx += 4;
     }
   }
+}
+
+export function blitToDisplay() {
+  if (!displayCtx || !displayCanvas) return;
+  displayCtx.drawImage(
+    canvas,
+    0, 0, LOGICAL_W, LOGICAL_H,
+    0, 0, displayCanvas.width, displayCanvas.height
+  );
 }
 
 export function getCanvas() { return canvas; }

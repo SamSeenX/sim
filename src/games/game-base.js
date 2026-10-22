@@ -1,3 +1,5 @@
+import { blitToDisplay } from '../console/screen.js';
+
 export class GameBase {
   constructor(store) {
     this.store = store;
@@ -17,6 +19,7 @@ export class GameBase {
       this._last = ts;
       this.tick(dt);
       this.render();
+      blitToDisplay();
       this._raf = requestAnimationFrame(loop);
     };
     this._raf = requestAnimationFrame(ts => {
