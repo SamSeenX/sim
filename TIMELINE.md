@@ -16,7 +16,9 @@
 - **New Game — Snake**: Added complete retro grid snake with turn input buffering, apple food, and score persistence.
 - **New Game — Defender**: Added space shooter featuring parallax scrolling starfield, alien formation sway and dive, laser blasters, and explosions.
 - **New Game — Pixel Drift**: Added top-down arcade highway racer with 3-lane road scrolling, traffic dodging, oil slicks, turbo boost on [A], and audio.
-- **Universal High Scores**: Connected durable high score tracking across all 6 games and displayed live records on the main menu.
+- **New Game — Ghost Maze**: Added authentic arcade labyrinth maze with pellet chomping, power pellets, frightened ghost hunting, and score persistence.
+- **New Game — Micro Sweeper**: Added 12x10 minefield with safe first-tap guarantee, flood fill, flag toggles on [B], and timer records.
+- **Universal High Scores & Menu Scrolling**: Connected durable high score tracking across all 8 games with dynamic scroll-windowed main menu navigation.
 - **Architecture Validation**: Maintained strict compliance with the 200-line modularity rule across all source files.
 
 ## Active Backlog

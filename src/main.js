@@ -78,6 +78,22 @@ export function loadGame(name, s) {
     });
     return;
   }
+
+  if (name === 'ghost-maze') {
+    import('./games/maze/maze.js').then(m => {
+      activeGame = new m.MazeGame(currentStore);
+      activeGame.start();
+    });
+    return;
+  }
+
+  if (name === 'micro-sweeper') {
+    import('./games/sweeper/sweeper.js').then(m => {
+      activeGame = new m.SweeperGame(currentStore);
+      activeGame.start();
+    });
+    return;
+  }
 }
 
 on('game:exit', () => loadGame('menu', store));

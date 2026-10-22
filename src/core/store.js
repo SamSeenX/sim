@@ -9,7 +9,9 @@ const DEFAULTS = {
     'rooftop-cat': 0,
     snake: 0,
     defender: 0,
-    'pixel-drift': 0
+    'pixel-drift': 0,
+    'ghost-maze': 0,
+    'micro-sweeper': 0
   },
   activeGame: null,
 };

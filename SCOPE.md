@@ -8,6 +8,9 @@
   - `ROOFTOP CAT`: Scrolling 2D platform runner with physics.
   - `SNAKE`: Grid-based serpent with speed ramp and input buffering.
   - `DEFENDER`: Vertical space shooter with parallax stars, formations, and lasers.
+  - `PIXEL DRIFT`: Top-down 3-lane highway racer with turbo boost and obstacles.
+  - `GHOST MAZE`: Arcade labyrinth chomp puzzle with pellets and ghosts.
+  - `MICRO SWEEPER`: 12x10 minefield with recursive flood-fill and flagging.
 - **PWA Durability**: Offline playability, web manifest, installable icon set.
 - **Decoupled Architecture**: Vanilla EventBus, Store, and GameBase lifecycle (`init()`, `tick()`, `render()`, `destroy()`).
 
