@@ -22,7 +22,7 @@ export class SnakeGame extends GameBase {
   }
 
   _restart() {
-    const hi = this.store.getScore('snake') || 0;
+    const hi = (this.store.getScore ? this.store.getScore('snake') : this.store.getScores?.()?.snake) || 0;
     this.state = {
       snake: INITIAL_SNAKE.map(s => ({ ...s })),
       dir: { ...DIRS.right },

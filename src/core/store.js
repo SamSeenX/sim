@@ -33,6 +33,7 @@ export function initStore() {
       save();
       emit('theme:change', t);
     },
+    getScore: game => (state.scores && state.scores[game]) || 0,
     getScores: () => ({ ...state.scores }),
     setScore(game, score) {
       if (score > (state.scores[game] || 0)) {

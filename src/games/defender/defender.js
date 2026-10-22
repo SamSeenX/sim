@@ -126,7 +126,7 @@ export class DefenderGame extends GameBase {
     if (s.lives <= 0) {
       s.phase = 'gameover';
       emit('audio:play', 'gameover');
-      const hi = this.store.getScore('defender') || 0;
+      const hi = (this.store.getScore ? this.store.getScore('defender') : this.store.getScores?.()?.defender) || 0;
       if (s.score > hi) this.store.setScore('defender', s.score);
     }
   }

@@ -39,6 +39,7 @@ export class BlockFallGame extends GameBase {
       piece: randPiece(),
       next: randPiece(),
       score: 0,
+      lines: 0,
       level: 1,
       phase: 'play'
     };
@@ -138,8 +139,9 @@ export class BlockFallGame extends GameBase {
     }
 
     if (cleared) {
+      s.lines += cleared;
       s.score += [0, 100, 300, 500, 800][cleared] * s.level;
-      s.level = Math.floor(s.score / 1000) + 1;
+      s.level = Math.floor(s.lines / 10) + 1;
       emit('audio:play', 'line');
     } else {
       emit('audio:play', 'drop');
@@ -157,7 +159,7 @@ export class BlockFallGame extends GameBase {
 
   tick(dt) {
     if (this.state.phase !== 'play') return;
-    const interval = Math.max(0.1, 0.8 - (this.state.level - 1) * 0.07);
+    const interval = Math.max(0.12, 0.8 - (this.state.level - 1) * 0.045);
     this._dropTimer += dt;
     if (this._dropTimer >= interval) {
       this._dropTimer = 0;
