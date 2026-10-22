@@ -31,8 +31,20 @@ export class BouncerGame extends GameBase {
   _onInput(a) {
     if (a === 'left')  this._held.left = true;
     if (a === 'right') this._held.right = true;
-    if (a === 'a' && this.state.phase === 'ready') this._launch();
-    if (a === 'b') emit('game:exit');
+    if ((a === 'a' || a === 'start') && this.state.phase === 'ready') this._launch();
+    if (a === 'start' && this.state.phase === 'play') this._togglePause();
+    else if (a === 'start' && this.state.phase === 'paused') this._togglePause();
+    if (a === 'b' || a === 'select') emit('game:exit');
+  }
+
+  _togglePause() {
+    if (this.state.phase === 'play') {
+      this.state.phase = 'paused';
+      emit('audio:play', 'cursor');
+    } else if (this.state.phase === 'paused') {
+      this.state.phase = 'play';
+      emit('audio:play', 'cursor');
+    }
   }
 
   _onInputUp(a) {

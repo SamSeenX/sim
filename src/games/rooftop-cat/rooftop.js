@@ -61,15 +61,30 @@ export class RooftopGame extends GameBase {
   }
 
   _onDown(a) {
+    const s = this.state;
+    if (s.phase === 'paused') {
+      if (a === 'start') {
+        s.phase = 'play';
+        emit('audio:play', 'cursor');
+      } else if (a === 'b' || a === 'select') {
+        emit('game:exit');
+      }
+      return;
+    }
+    if (a === 'start' && s.phase === 'play') {
+      s.phase = 'paused';
+      emit('audio:play', 'cursor');
+      return;
+    }
     if (a === 'left')  this._held.left  = true;
     if (a === 'right') this._held.right = true;
-    if (a === 'a' && this.state.player.jumps < 2) {
-      this.state.player.vy = JUMP_V;
-      this.state.player.jumps++;
-      this.state.player.onGround = false;
+    if (a === 'a' && s.player.jumps < 2) {
+      s.player.vy = JUMP_V;
+      s.player.jumps++;
+      s.player.onGround = false;
       emit('audio:play', 'jump');
     }
-    if (a === 'b') emit('game:exit');
+    if (a === 'b' || a === 'select') emit('game:exit');
   }
 
   _onUp(a) {

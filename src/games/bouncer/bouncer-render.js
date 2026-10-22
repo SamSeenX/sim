@@ -33,6 +33,9 @@ export function renderBouncer(state) {
   drawRect(Math.round(state.paddle.x), H - PADDLE_H - 4, PADDLE_W, PADDLE_H, 3);
   drawRect(Math.round(state.paddle.x) + 1, H - PADDLE_H - 3, PADDLE_W - 2, 1, 1);
 
+  if (state.phase === 'paused') {
+    drawText('PAUSE', 56, H / 2 - 4, 3);
+  }
   if (state.phase === 'gameover') {
     drawText('GAME OVER', 38, H / 2 - 8, 3);
     drawText('B: MENU', 46, H / 2 + 4, 2);

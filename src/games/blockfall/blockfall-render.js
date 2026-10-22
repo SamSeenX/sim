@@ -44,6 +44,9 @@ export function renderBlockFall(state) {
   drawText('LV', HUD_X, FIELD_Y + 28, 2);
   drawText(String(state.level), HUD_X, FIELD_Y + 38, 3);
 
+  if (state.phase === 'paused') {
+    drawText('PAUSE', HUD_X, FIELD_Y + 54, 3);
+  }
   if (state.phase === 'gameover') {
     drawText('OVER', HUD_X, FIELD_Y + 60, 3);
     drawText('B:MNU', HUD_X, FIELD_Y + 74, 2);

@@ -61,14 +61,17 @@
   align-items: center;
   gap: 6px;
   transform: rotate(-26deg);
+  padding: 6px;
 }
 .pv-btn-sys {
-  width: 40px;
-  height: 12px;
-  border-radius: 6px;
+  width: 44px;
+  height: 18px;
+  border-radius: 9px;
   background: var(--btn-sys);
   border: none;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   box-shadow: 0 2px 0 #1b1c20, 0 3px 4px rgba(0,0,0,0.4);
 }
 .pv-btn-sys:active {

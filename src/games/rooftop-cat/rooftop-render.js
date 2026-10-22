@@ -60,6 +60,9 @@ export function renderRooftop(state) {
   drawText(`SC:${state.score}`, 2, 2, 3);
   drawText(`LV${state.level + 1}`, W - 24, 2, 3);
 
+  if (state.phase === 'paused') {
+    drawText('PAUSE', 56, H / 2 - 4, 3);
+  }
   if (state.phase === 'gameover') {
     drawText('GAME OVER', 40, H / 2 - 8, 3);
     drawText('B: MENU', 46, H / 2 + 4, 2);

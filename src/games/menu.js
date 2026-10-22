@@ -21,7 +21,7 @@ export class MenuGame extends GameBase {
       this.cursor = (this.cursor - 1 + GAMES.length) % GAMES.length;
       emit('audio:play', 'cursor');
     }
-    if (action === 'down') {
+    if (action === 'down' || action === 'select') {
       this.cursor = (this.cursor + 1) % GAMES.length;
       emit('audio:play', 'cursor');
     }

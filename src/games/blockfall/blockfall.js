@@ -51,8 +51,22 @@ export class BlockFallGame extends GameBase {
 
   _onInput(a) {
     const s = this.state;
+    if (s.phase === 'paused') {
+      if (a === 'start') {
+        s.phase = 'play';
+        emit('audio:play', 'cursor');
+      } else if (a === 'b' || a === 'select') {
+        emit('game:exit');
+      }
+      return;
+    }
     if (s.phase !== 'play') {
-      if (a === 'b') emit('game:exit');
+      if (a === 'b' || a === 'select') emit('game:exit');
+      return;
+    }
+    if (a === 'start') {
+      s.phase = 'paused';
+      emit('audio:play', 'cursor');
       return;
     }
     if (a === 'left')  this._move(0, -1);
@@ -60,7 +74,7 @@ export class BlockFallGame extends GameBase {
     if (a === 'down')  this._move(1,  0);
     if (a === 'up')    this._tryRotate();
     if (a === 'a')     this._hardDrop();
-    if (a === 'b')     emit('game:exit');
+    if (a === 'b' || a === 'select') emit('game:exit');
   }
 
   _move(dr, dc) {
