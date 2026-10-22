@@ -1,6 +1,6 @@
 import { GameBase } from './game-base.js';
 import { clearScreen, drawText, drawRect, getLogicalW, getLogicalH } from '../console/screen.js';
-import { on, off } from '../core/event-bus.js';
+import { on, off, emit } from '../core/event-bus.js';
 import { loadGame } from '../main.js';
 
 const GAMES = ['BOUNCER', 'BLOCKFALL', 'ROOFTOP CAT'];
