@@ -1,21 +1,45 @@
 const LOGICAL_W = 160;
 const LOGICAL_H = 144;
-const PIXEL_SCALE = 4;
-const GAP_SIZE = 2;
-const CELL_SIZE = PIXEL_SCALE + GAP_SIZE; // 6px per logical pixel
+const PIXEL_SCALE = 2; // 2 physical display pixels per logical pixel
+const GAP_SIZE = 1;    // 1 physical display pixel gap (33% gap ratio, matching original dot-matrix LCD)
+const CELL_SIZE = PIXEL_SCALE + GAP_SIZE; // 3px total per logical pixel
 
 let displayCanvas, displayCtx;
-// 160 x 144 typed array holding direct shade indices: 0, 1, 2, or 3
+let activeScale = 1;
 const vram = new Uint8Array(LOGICAL_W * LOGICAL_H);
 
 export function initScreen() {
   displayCanvas = document.getElementById('pv-canvas');
-  displayCanvas.width = LOGICAL_W * CELL_SIZE;
-  displayCanvas.height = LOGICAL_H * CELL_SIZE;
   displayCtx = displayCanvas.getContext('2d', { alpha: false });
   displayCtx.imageSmoothingEnabled = false;
 
+  recalcIntegerScale();
+  window.addEventListener('resize', recalcIntegerScale);
+
   clearScreen();
+}
+
+export function recalcIntegerScale() {
+  const wrapper = document.querySelector('.pv-screen-wrapper');
+  if (!wrapper || !displayCanvas) return;
+
+  const w = wrapper.clientWidth;
+  const h = wrapper.clientHeight;
+
+  // Find exact integer multiplier k so that display pixels map 1:1 without Moiré subpixel distortion
+  const nativeW = LOGICAL_W * CELL_SIZE; // 480px
+  const nativeH = LOGICAL_H * CELL_SIZE; // 432px
+
+  const k = Math.max(1, Math.floor(Math.min(w / nativeW, h / nativeH)));
+  activeScale = k;
+
+  displayCanvas.width = nativeW * k;
+  displayCanvas.height = nativeH * k;
+  displayCanvas.style.width = `${displayCanvas.width}px`;
+  displayCanvas.style.height = `${displayCanvas.height}px`;
+
+  displayCtx.imageSmoothingEnabled = false;
+  blitToDisplay();
 }
 
 export function drawPixel(lx, ly, shade = 3) {
@@ -104,34 +128,37 @@ export function blitToDisplay() {
   const shades = rawShades.map(parseHex);
   const gap = parseHex(rawGap);
 
-  const dispW = LOGICAL_W * CELL_SIZE; // 960
-  const dispH = LOGICAL_H * CELL_SIZE; // 864
+  const k = activeScale || 1;
+  const dispW = displayCanvas.width;
+  const dispH = displayCanvas.height;
+
   const imgData = displayCtx.createImageData(dispW, dispH);
   const d32 = new Uint32Array(imgData.data.buffer);
 
   const gapU32 = (255 << 24) | (gap[2] << 16) | (gap[1] << 8) | gap[0];
   const shadesU32 = shades.map(s => (255 << 24) | (s[2] << 16) | (s[1] << 8) | s[0]);
 
-  // Fill background with gap channel color
+  // Unlit gap background
   d32.fill(gapU32);
 
-  // Blit 4x4 pixel blocks leaving 2px gap between pixels
+  const pixelDim = PIXEL_SCALE * k;
+  const cellDim = CELL_SIZE * k;
+
+  // Blit each logical pixel as an exact pixel block leaving the gap channel intact
   for (let ly = 0; ly < LOGICAL_H; ly++) {
     const vramRow = ly * LOGICAL_W;
-    const dispRowStart = ly * CELL_SIZE * dispW;
+    const baseRowY = ly * cellDim;
 
     for (let lx = 0; lx < LOGICAL_W; lx++) {
       const shadeVal = vram[vramRow + lx];
       const colorU32 = shadesU32[shadeVal];
-      const pxOffset = dispRowStart + lx * CELL_SIZE;
+      const baseColX = lx * cellDim;
 
-      // 4x4 active LCD pixel block
-      for (let dy = 0; dy < PIXEL_SCALE; dy++) {
-        const lineOffset = pxOffset + dy * dispW;
-        d32[lineOffset]     = colorU32;
-        d32[lineOffset + 1] = colorU32;
-        d32[lineOffset + 2] = colorU32;
-        d32[lineOffset + 3] = colorU32;
+      for (let dy = 0; dy < pixelDim; dy++) {
+        const lineOffset = (baseRowY + dy) * dispW + baseColX;
+        for (let dx = 0; dx < pixelDim; dx++) {
+          d32[lineOffset + dx] = colorU32;
+        }
       }
     }
   }
