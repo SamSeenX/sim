@@ -1,10 +1,12 @@
 import { initErrorBoundary } from './core/error-boundary.js';
 import { initStore }         from './core/store.js';
+import { initAudio }         from './core/audio.js';
 import { initShell }         from './console/shell.js';
 import { on }                from './core/event-bus.js';
 import { MenuGame }          from './games/menu.js';
 
 initErrorBoundary();
+initAudio();
 const store = initStore();
 initShell(store);
 

@@ -78,11 +78,13 @@ export class BlockFallGame extends GameBase {
     const rotated = rotate(p.shape);
     if (this._fits(rotated, p.row, p.col)) {
       p.shape = rotated;
+      emit('audio:play', 'rotate');
     }
   }
 
   _hardDrop() {
     while (this._move(1, 0)) {}
+    emit('audio:play', 'drop');
     this._lock();
   }
 
@@ -121,6 +123,9 @@ export class BlockFallGame extends GameBase {
     if (cleared) {
       s.score += [0, 100, 300, 500, 800][cleared] * s.level;
       s.level = Math.floor(s.score / 1000) + 1;
+      emit('audio:play', 'line');
+    } else {
+      emit('audio:play', 'drop');
     }
 
     s.piece = s.next;
@@ -128,6 +133,7 @@ export class BlockFallGame extends GameBase {
 
     if (!this._fits(s.piece.shape, s.piece.row, s.piece.col)) {
       s.phase = 'gameover';
+      emit('audio:play', 'gameover');
       this.store.setScore('blockfall', s.score);
     }
   }

@@ -1,3 +1,5 @@
+import { emit } from '../core/event-bus.js';
+
 const THEMES = [
   { id: 'ironside', color: '#f0a500', label: 'Ironside' },
   { id: 'phantom',  color: '#00e5cc', label: 'Phantom'  },
@@ -22,6 +24,7 @@ export function initThemeSwitcher(store) {
     btn.addEventListener('click', () => {
       store.setTheme(theme.id);
       updateActive(store.getTheme());
+      emit('audio:play', 'cursor');
     });
     btn.dataset.themeId = theme.id;
     dock.appendChild(btn);

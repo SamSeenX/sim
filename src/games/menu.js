@@ -17,9 +17,16 @@ export class MenuGame extends GameBase {
   destroy() { off('input:down', this._onInput); super.destroy(); }
 
   _onInput(action) {
-    if (action === 'up')    this.cursor = (this.cursor - 1 + GAMES.length) % GAMES.length;
-    if (action === 'down')  this.cursor = (this.cursor + 1) % GAMES.length;
+    if (action === 'up') {
+      this.cursor = (this.cursor - 1 + GAMES.length) % GAMES.length;
+      emit('audio:play', 'cursor');
+    }
+    if (action === 'down') {
+      this.cursor = (this.cursor + 1) % GAMES.length;
+      emit('audio:play', 'cursor');
+    }
     if (action === 'a' || action === 'start') {
+      emit('audio:play', 'select');
       const g = GAMES[this.cursor].toLowerCase().replace(' ', '-');
       loadGame(g, this.store);
     }

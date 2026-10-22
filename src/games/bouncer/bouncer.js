@@ -93,6 +93,7 @@ export class BouncerGame extends GameBase {
         const offset = (ball.x + BALL_SIZE / 2 - (px + PADDLE_W / 2)) / (PADDLE_W / 2);
         ball.vx = offset * BALL_SPEED_BASE * 1.2;
         ball.y = py - BALL_SIZE;
+        emit('audio:play', 'bounce');
       }
 
       s.bricks.forEach(b => {
@@ -103,8 +104,15 @@ export class BouncerGame extends GameBase {
           if (b.hits >= maxHits) {
             b.alive = false;
             s.score += b.type === 2 ? 20 : 10;
-            if (b.type === 3) s.balls.push({ x: ball.x, y: ball.y, vx: -ball.vx, vy: ball.vy });
+            if (b.type === 3) {
+              s.balls.push({ x: ball.x, y: ball.y, vx: -ball.vx, vy: ball.vy });
+              emit('audio:play', 'powerup');
+            } else {
+              emit('audio:play', 'brick');
+            }
             if (b.type === 4) { ball.vx *= 1.15; ball.vy *= 1.15; }
+          } else {
+            emit('audio:play', 'brick');
           }
           ball.vy = -ball.vy;
         }
@@ -117,8 +125,10 @@ export class BouncerGame extends GameBase {
       s.lives--;
       if (s.lives <= 0) {
         s.phase = 'gameover';
+        emit('audio:play', 'gameover');
         this.store.setScore('bouncer', s.score);
       } else {
+        emit('audio:play', 'noise');
         this._resetBall();
         s.phase = 'ready';
       }

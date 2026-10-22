@@ -65,6 +65,7 @@ export class RooftopGame extends GameBase {
       this.state.player.vy = JUMP_V;
       this.state.player.jumps++;
       this.state.player.onGround = false;
+      emit('audio:play', 'jump');
     }
     if (a === 'b') emit('game:exit');
   }
@@ -101,12 +102,14 @@ export class RooftopGame extends GameBase {
         }
         if (t.type === 3 && p.x + 6 > t.x && p.x < t.x + TILE) {
           p.vy = AC_PUSH;
+          emit('audio:play', 'bounce');
         }
       }
     });
 
     if (p.y > 144) {
       s.phase = 'gameover';
+      emit('audio:play', 'gameover');
       this.store.setScore('rooftop', s.score);
     }
 
@@ -120,6 +123,7 @@ export class RooftopGame extends GameBase {
       if (e.x >= e.pr) e.dir = -1;
       if (Math.abs(e.x - p.x) < 9 && Math.abs(e.y - p.y) < 9) {
         s.phase = 'gameover';
+        emit('audio:play', 'noise');
         this.store.setScore('rooftop', s.score);
       }
     });
@@ -128,11 +132,13 @@ export class RooftopGame extends GameBase {
       if (!f.collected && Math.abs(f.x - p.x) < 10 && Math.abs(f.y - p.y) < 10) {
         f.collected = true;
         s.score += 50;
+        emit('audio:play', 'collect');
       }
     });
 
     if (s.fish.every(f => f.collected)) {
       s.phase = 'win';
+      emit('audio:play', 'powerup');
       this.store.setScore('rooftop', s.score);
       setTimeout(() => this._loadLevel((s.level + 1) % LEVELS.length), 2000);
     }
