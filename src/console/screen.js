@@ -4,8 +4,9 @@ const PIXEL_SCALE = 4;
 const GAP_SIZE = 2;
 const CELL_SIZE = PIXEL_SCALE + GAP_SIZE; // 6px per logical pixel
 
-let buffer, bufferCtx;
 let displayCanvas, displayCtx;
+// 160 x 144 typed array holding direct shade indices: 0, 1, 2, or 3
+const vram = new Uint8Array(LOGICAL_W * LOGICAL_H);
 
 export function initScreen() {
   displayCanvas = document.getElementById('pv-canvas');
@@ -14,38 +15,49 @@ export function initScreen() {
   displayCtx = displayCanvas.getContext('2d', { alpha: false });
   displayCtx.imageSmoothingEnabled = false;
 
-  buffer = document.createElement('canvas');
-  buffer.width = LOGICAL_W;
-  buffer.height = LOGICAL_H;
-  bufferCtx = buffer.getContext('2d', { willReadFrequently: true });
-  bufferCtx.imageSmoothingEnabled = false;
-
   clearScreen();
 }
 
 export function drawPixel(lx, ly, shade = 3) {
   if (lx < 0 || lx >= LOGICAL_W || ly < 0 || ly >= LOGICAL_H) return;
-  bufferCtx.fillStyle = typeof shade === 'number' ? `index:${shade}` : shade;
-  bufferCtx.fillRect(lx, ly, 1, 1);
+  const s = typeof shade === 'number' ? shade : 3;
+  vram[ly * LOGICAL_W + lx] = Math.max(0, Math.min(3, s));
 }
 
 export function clearScreen() {
-  bufferCtx.fillStyle = 'index:0';
-  bufferCtx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+  vram.fill(0);
   blitToDisplay();
 }
 
 export function drawRect(lx, ly, lw, lh, shade = 3) {
-  bufferCtx.fillStyle = typeof shade === 'number' ? `index:${shade}` : shade;
-  bufferCtx.fillRect(lx, ly, lw, lh);
+  const s = typeof shade === 'number' ? shade : 3;
+  const val = Math.max(0, Math.min(3, s));
+  const x0 = Math.max(0, Math.min(LOGICAL_W, lx));
+  const x1 = Math.max(0, Math.min(LOGICAL_W, lx + lw));
+  const y0 = Math.max(0, Math.min(LOGICAL_H, ly));
+  const y1 = Math.max(0, Math.min(LOGICAL_H, ly + lh));
+
+  for (let y = y0; y < y1; y++) {
+    const rowOffset = y * LOGICAL_W;
+    for (let x = x0; x < x1; x++) {
+      vram[rowOffset + x] = val;
+    }
+  }
 }
 
 export function drawSprite(sprite, lx, ly) {
   for (let row = 0; row < sprite.length; row++) {
-    for (let col = 0; col < sprite[row].length; col++) {
-      const val = sprite[row][col];
+    const py = ly + row;
+    if (py < 0 || py >= LOGICAL_H) continue;
+    const rowOffset = py * LOGICAL_W;
+    const spRow = sprite[row];
+    for (let col = 0; col < spRow.length; col++) {
+      const px = lx + col;
+      if (px < 0 || px >= LOGICAL_W) continue;
+      const val = spRow[col];
       if (val !== '' && val !== null && val !== undefined) {
-        drawPixel(lx + col, ly + row, val);
+        const s = typeof val === 'number' ? val : 3;
+        vram[rowOffset + px] = Math.max(0, Math.min(3, s));
       }
     }
   }
@@ -68,47 +80,65 @@ export function drawText(text, lx, ly, shade = 3) {
   }
 }
 
+function parseHex(hex) {
+  const c = hex.replace('#', '');
+  return [
+    parseInt(c.substring(0, 2), 16),
+    parseInt(c.substring(2, 4), 16),
+    parseInt(c.substring(4, 6), 16)
+  ];
+}
+
 export function blitToDisplay() {
   if (!displayCtx || !displayCanvas) return;
 
   const style = getComputedStyle(document.documentElement);
-  const shades = [
+  const rawShades = [
     style.getPropertyValue('--lcd-0').trim() || '#9bbc0f',
     style.getPropertyValue('--lcd-1').trim() || '#8bac0f',
     style.getPropertyValue('--lcd-2').trim() || '#306230',
     style.getPropertyValue('--lcd-3').trim() || '#0f380f',
   ];
-  const gapColor = style.getPropertyValue('--lcd-gap').trim() || '#85a50e';
+  const rawGap = style.getPropertyValue('--lcd-gap').trim() || '#85a50e';
 
-  // Fill entire display with 2px gap background
-  displayCtx.fillStyle = gapColor;
-  displayCtx.fillRect(0, 0, displayCanvas.width, displayCanvas.height);
+  const shades = rawShades.map(parseHex);
+  const gap = parseHex(rawGap);
 
-  const imgData = bufferCtx.getImageData(0, 0, LOGICAL_W, LOGICAL_H).data;
+  const dispW = LOGICAL_W * CELL_SIZE; // 960
+  const dispH = LOGICAL_H * CELL_SIZE; // 864
+  const imgData = displayCtx.createImageData(dispW, dispH);
+  const d32 = new Uint32Array(imgData.data.buffer);
 
-  // Render discrete pixel blocks leaving ~2px gap between pixels
-  for (let y = 0; y < LOGICAL_H; y++) {
-    const py = y * CELL_SIZE;
-    for (let x = 0; x < LOGICAL_W; x++) {
-      const idx = (y * LOGICAL_W + x) * 4;
-      const r = imgData[idx], g = imgData[idx + 1], b = imgData[idx + 2];
-      
-      // Map arbitrary colors or luminosity to authentic 4-shade monochromatic palette
-      let shadeIndex = 0;
-      const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-      if (lum < 0.25) shadeIndex = 3;
-      else if (lum < 0.55) shadeIndex = 2;
-      else if (lum < 0.85) shadeIndex = 1;
-      else shadeIndex = 0;
+  const gapU32 = (255 << 24) | (gap[2] << 16) | (gap[1] << 8) | gap[0];
+  const shadesU32 = shades.map(s => (255 << 24) | (s[2] << 16) | (s[1] << 8) | s[0]);
 
-      displayCtx.fillStyle = shades[shadeIndex];
-      displayCtx.fillRect(x * CELL_SIZE, py, PIXEL_SCALE, PIXEL_SCALE);
+  // Fill background with gap channel color
+  d32.fill(gapU32);
+
+  // Blit 4x4 pixel blocks leaving 2px gap between pixels
+  for (let ly = 0; ly < LOGICAL_H; ly++) {
+    const vramRow = ly * LOGICAL_W;
+    const dispRowStart = ly * CELL_SIZE * dispW;
+
+    for (let lx = 0; lx < LOGICAL_W; lx++) {
+      const shadeVal = vram[vramRow + lx];
+      const colorU32 = shadesU32[shadeVal];
+      const pxOffset = dispRowStart + lx * CELL_SIZE;
+
+      // 4x4 active LCD pixel block
+      for (let dy = 0; dy < PIXEL_SCALE; dy++) {
+        const lineOffset = pxOffset + dy * dispW;
+        d32[lineOffset]     = colorU32;
+        d32[lineOffset + 1] = colorU32;
+        d32[lineOffset + 2] = colorU32;
+        d32[lineOffset + 3] = colorU32;
+      }
     }
   }
+
+  displayCtx.putImageData(imgData, 0, 0);
 }
 
-export function getCanvas() { return buffer; }
-export function getCtx()    { return bufferCtx; }
 export function getLogicalW() { return LOGICAL_W; }
 export function getLogicalH() { return LOGICAL_H; }
 
