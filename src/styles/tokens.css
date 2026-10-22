@@ -1,4 +1,6 @@
-/* ── Classic 1989 (Iconic retro DMG gray, magenta buttons, olive LCD) ─ */
+/* ── 4-Shade Monochromatic LCD Themes with Authentic Gap Colors ── */
+
+/* ── Classic 1989 Pea-Soup Olive LCD (DMG-01) ── */
 [data-theme="ironside"] {
   --shell-bg:      #d1d0c7;
   --shell-shadow:  #8b8a82;
@@ -6,21 +8,24 @@
   --bezel-bg:      #6e7077;
   --bezel-border:  #4f5158;
   --bezel-lens:    #7b7d85;
-  --btn-primary:   #9a2257;   /* Burgundy/magenta A/B */
+  --btn-primary:   #9a2257;
   --btn-secondary: #6e153c;
   --btn-text:      #ffffff;
   --btn-dpad:      #2b2b2b;
   --btn-dpad-hi:   #404040;
   --btn-sys:       #8a8c92;
-  --screen-bg:     #8f9e21;   /* Classic 4-shade greenish olive LCD */
-  --screen-px:     #1d2b0e;   /* Deep olive dark pixel */
-  --screen-gap:    #82911d;
+  /* 4 shades from lightest (background) to darkest */
+  --lcd-0:         #9bbc0f;   /* Lightest background */
+  --lcd-1:         #8bac0f;   /* Light tone */
+  --lcd-2:         #306230;   /* Dark tone */
+  --lcd-3:         #0f380f;   /* Darkest pixel */
+  --lcd-gap:       #85a50e;   /* Inter-pixel unlit gap channel */
   --power-led:     #e52521;
   --body-bg:       #18191c;
   --text:          #2c3240;
 }
 
-/* ── Stealth Black ─────────────────────────────────────────────── */
+/* ── Retro Pocket Silver / High Contrast B&W LCD ── */
 [data-theme="phantom"] {
   --shell-bg:      #222429;
   --shell-shadow:  #111215;
@@ -34,15 +39,17 @@
   --btn-dpad:      #121316;
   --btn-dpad-hi:   #25272d;
   --btn-sys:       #363840;
-  --screen-bg:     #0c1412;
-  --screen-px:     #00dfc2;
-  --screen-gap:    #070c0b;
+  --lcd-0:         #c4cfa1;
+  --lcd-1:         #8b956d;
+  --lcd-2:         #4d533c;
+  --lcd-3:         #1f1f15;
+  --lcd-gap:       #b3bd93;
   --power-led:     #00dfc2;
   --body-bg:       #0d0e11;
   --text:          #c6f6ef;
 }
 
-/* ── Nostalgia Berry Red ────────────────────────────────────────── */
+/* ── Warm Amber / Yellow Phosphor Retro LCD ── */
 [data-theme="ivory"] {
   --shell-bg:      #bf2642;
   --shell-shadow:  #781426;
@@ -56,15 +63,17 @@
   --btn-dpad:      #22252a;
   --btn-dpad-hi:   #343840;
   --btn-sys:       #202226;
-  --screen-bg:     #9ea832;
-  --screen-px:     #1e2508;
-  --screen-gap:    #8e972c;
+  --lcd-0:         #e0dbcd;
+  --lcd-1:         #a89f91;
+  --lcd-2:         #706657;
+  --lcd-3:         #2b261f;
+  --lcd-gap:       #cdc7b8;
   --power-led:     #ffdd33;
   --body-bg:       #19181a;
   --text:          #ffffff;
 }
 
-/* ── Clear Glacier (Translucent blue-violet vibe) ──────────────── */
+/* ── Cool Cyan Backlit LCD ── */
 [data-theme="midnight"] {
   --shell-bg:      #3d4e80;
   --shell-shadow:  #242f50;
@@ -78,9 +87,11 @@
   --btn-dpad:      #1d243a;
   --btn-dpad-hi:   #2f3a5e;
   --btn-sys:       #2f3b60;
-  --screen-bg:     #1a243b;
-  --screen-px:     #ffd84d;
-  --screen-gap:    #121929;
+  --lcd-0:         #a4c2c2;
+  --lcd-1:         #6b8e8e;
+  --lcd-2:         #355252;
+  --lcd-3:         #0c1a1a;
+  --lcd-gap:       #93b0b0;
   --power-led:     #ff3b30;
   --body-bg:       #0b0e17;
   --text:          #d5e0ff;

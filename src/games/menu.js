@@ -28,27 +28,32 @@ export class MenuGame extends GameBase {
   tick(dt) { this.blink += dt; }
 
   render() {
-    const style = getComputedStyle(document.documentElement);
-    const px  = style.getPropertyValue('--screen-px').trim()  || '#8bac0f';
     const W = getLogicalW(), H = getLogicalH();
 
     clearScreen();
 
-    drawText('PIXELVAULT', 32, 16, px);
-    drawRect(12, 28, W - 24, 1, px);
+    // Authentic retro banner
+    drawRect(10, 10, W - 20, 22, 3);
+    drawRect(12, 12, W - 24, 18, 0);
+    drawText('PIXELVAULT', 32, 17, 3);
 
+    // Game menu items
     GAMES.forEach((name, i) => {
-      const y = 46 + i * 22;
+      const y = 48 + i * 20;
       const selected = i === this.cursor;
       if (selected) {
-        drawRect(10, y - 3, W - 20, 15, px + '26');
+        drawRect(16, y - 2, W - 32, 13, 2);
+        drawRect(18, y, W - 36, 9, 0);
         if (Math.floor(this.blink * 3) % 2 === 0) {
-          drawText('>', 14, y + 1, px);
+          drawText('>', 22, y + 1, 3);
         }
+        drawText(name, 32, y + 1, 3);
+      } else {
+        drawText(name, 32, y + 1, 2);
       }
-      drawText(name, 26, y + 1, px);
     });
 
-    drawText('A:PLAY  ARROWS:NAV', 14, H - 16, px);
+    drawRect(10, H - 22, W - 20, 1, 2);
+    drawText('A:PLAY  ARROWS:NAV', 18, H - 14, 3);
   }
 }
