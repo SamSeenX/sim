@@ -145,5 +145,16 @@ export function invalidatePalette() {
   cachedTheme = null;
 }
 
+export function captureVRAM() {
+  return new Uint8Array(vram);
+}
+
+export function restoreVRAM(saved) {
+  if (saved) {
+    vram.set(saved);
+    blitToDisplay();
+  }
+}
+
 export function getLogicalW() { return LOGICAL_W; }
 export function getLogicalH() { return LOGICAL_H; }
