@@ -30,6 +30,11 @@ const KEY_MAP = {
 };
 
 const held = new Set();
+let inputFilter = null;
+
+export function setInputFilter(fn) {
+  inputFilter = fn;
+}
 
 export function initControls() {
   window.addEventListener('keydown', e => {
@@ -40,6 +45,7 @@ export function initControls() {
     }
     if (held.has(action)) return;
     held.add(action);
+    if (inputFilter && inputFilter(action)) return;
     emit('input:down', action);
   });
 
@@ -57,6 +63,7 @@ export function initControls() {
     const handleStart = ev => {
       ev.preventDefault();
       pulse(20);
+      if (inputFilter && inputFilter(action)) return;
       emit('input:down', action);
     };
 
@@ -69,7 +76,10 @@ export function initControls() {
     btn.addEventListener('touchend', handleEnd, { passive: false });
     btn.addEventListener('touchcancel', handleEnd, { passive: false });
 
-    btn.addEventListener('mousedown', () => emit('input:down', action));
+    btn.addEventListener('mousedown', () => {
+      if (inputFilter && inputFilter(action)) return;
+      emit('input:down', action);
+    });
     btn.addEventListener('mouseup',   () => emit('input:up',   action));
     btn.addEventListener('mouseleave',() => emit('input:up',   action));
   });

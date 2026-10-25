@@ -4,6 +4,7 @@ import { initAudio }         from './core/audio.js';
 import { initShell }         from './console/shell.js';
 import { on }                from './core/event-bus.js';
 import { MenuGame }          from './games/menu.js';
+import { showExitDialog, isExitDialogOpen } from './console/exit-dialog.js';
 
 initErrorBoundary();
 initAudio();
@@ -16,6 +17,7 @@ if (navigator.storage && navigator.storage.persist) {
 }
 
 let activeGame = null;
+let currentGameName = 'menu';
 
 export function loadGame(name, s) {
   if (activeGame) {
@@ -23,6 +25,7 @@ export function loadGame(name, s) {
     activeGame = null;
   }
 
+  currentGameName = name;
   const currentStore = s || store;
 
   if (name === 'menu') {
@@ -96,7 +99,24 @@ export function loadGame(name, s) {
   }
 }
 
-on('game:exit', () => loadGame('menu', store));
+on('game:exit', () => {
+  if (currentGameName === 'menu' || isExitDialogOpen()) return;
+
+  if (activeGame && activeGame.pause) {
+    activeGame.pause();
+  }
+
+  showExitDialog({
+    onConfirm: () => {
+      loadGame('menu', store);
+    },
+    onCancel: () => {
+      if (activeGame && activeGame.resume) {
+        activeGame.resume();
+      }
+    }
+  });
+});
 
 // Start on main menu
 loadGame('menu', store);

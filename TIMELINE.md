@@ -26,6 +26,7 @@
 - **Harmonious Reflective Palettes**: Refined substrate gap colors across all 4 themes (`ironside`, `phantom`, `ivory`, `midnight`) to remove harsh high-contrast dark green grid lines.
 - **Multi-Mode LCD Visual Engine**: Added interactive bezel toggle for cycling between `LCD: MATRIX` (authentic STN dot-matrix with glass sheen and vignette), `LCD: CRISP` (clean modern 8-bit pixels), and `LCD: CRT` (classic scanlines).
 - **Persistent LCD Preference**: Integrated screen mode state into `Store` with local storage durability.
+- **In-Game Accidental Exit Protection**: Integrated an authentic 4-shade LCD confirmation dialog ("EXIT GAME? YES / NO") that pauses active gameplay, traps inputs, and prevents accidental drops back to the main menu on stray [B] or [Select] presses.
 
 ## Active Backlog
 - [ ] Cartridge insertion sound effect and splash animation.

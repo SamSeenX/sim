@@ -2,6 +2,7 @@ import { on, emit } from '../core/event-bus.js';
 import { initScreen, invalidatePalette, blitToDisplay } from './screen.js';
 import { initControls } from './controls.js';
 import { initThemeSwitcher } from './theme-switcher.js';
+import { initExitDialog } from './exit-dialog.js';
 
 export function initShell(store) {
   const app = document.getElementById('app');
@@ -12,6 +13,7 @@ export function initShell(store) {
   initScreen(store);
   initControls(store);
   initThemeSwitcher(store);
+  initExitDialog();
 
   const lcdBtn = document.getElementById('pv-lcd-toggle');
   const modes = ['matrix', 'crisp', 'scanline'];
@@ -82,6 +84,20 @@ function buildShellHTML() {
           </div>
           <div class="pv-screen-wrapper">
             <canvas id="pv-canvas" width="160" height="144"></canvas>
+            <div class="pv-exit-modal" id="pv-exit-modal" hidden>
+              <div class="pv-modal-card">
+                <div class="pv-modal-title">EXIT GAME?</div>
+                <div class="pv-modal-desc">PROGRESS NOT SAVED</div>
+                <div class="pv-modal-actions">
+                  <button type="button" class="pv-modal-btn active" data-choice="no">NO</button>
+                  <button type="button" class="pv-modal-btn" data-choice="yes">YES</button>
+                </div>
+                <div class="pv-modal-hints">
+                  <span>[A] OK</span>
+                  <span>[B] CANCEL</span>
+                </div>
+              </div>
+            </div>
             <div class="pv-pixel-grid"></div>
             <div class="pv-screen-sheen"></div>
           </div>

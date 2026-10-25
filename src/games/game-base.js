@@ -34,4 +34,18 @@ export class GameBase {
       this._raf = null;
     }
   }
+
+  pause() {
+    if (this.state && this.state.phase) {
+      this._savedPhase = this.state.phase;
+      this.state.phase = 'paused';
+    }
+  }
+
+  resume() {
+    if (this.state && this._savedPhase !== undefined) {
+      this.state.phase = this._savedPhase;
+      this._savedPhase = undefined;
+    }
+  }
 }
