@@ -140,6 +140,11 @@ export function initControls() {
       triggerUp(action);
     });
   });
+
+  // Prevent any document-level touchmove rubber-banding or UI dragging
+  document.addEventListener('touchmove', e => {
+    e.preventDefault();
+  }, { passive: false });
 }
 
 function highlightDpadBtn(action, active) {

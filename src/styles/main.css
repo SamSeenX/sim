@@ -1,11 +1,9 @@
 html, body {
-  height: 100%;
-}
-
-body {
   background: var(--body-bg);
   color: var(--text);
   font-family: var(--font-ui);
   transition: var(--transition-theme);
-  overscroll-behavior-y: contain;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
