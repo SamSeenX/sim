@@ -18,6 +18,7 @@ export class OrbitGame extends GameBase {
   init() {
     on('input:down', this._onDown);
     on('input:up',   this._onUp);
+    this._spawnWave();
   }
 
   destroy() {
@@ -32,7 +33,7 @@ export class OrbitGame extends GameBase {
       stars.push({ x: Math.floor(Math.random() * 160), y: Math.floor(Math.random() * 144), shade: i % 3 === 0 ? 2 : 1 });
     }
     return {
-      phase: 'ready',
+      phase: 'play',
       score: 0,
       lives: 3,
       wave: 1,

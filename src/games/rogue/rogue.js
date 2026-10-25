@@ -25,7 +25,7 @@ export class RogueGame extends GameBase {
 
   _createInitialState() {
     return {
-      phase: 'ready',
+      phase: 'play',
       score: 0,
       roomIdx: 0,
       room: createRoom(0),

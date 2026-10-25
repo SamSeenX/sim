@@ -15,7 +15,7 @@ export class RiverGame extends GameBase {
 
   _createInitialState() {
     return {
-      phase: 'ready',
+      phase: 'play',
       score: 0,
       lives: 3,
       timer: 30,

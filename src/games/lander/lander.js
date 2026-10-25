@@ -28,7 +28,7 @@ export class LanderGame extends GameBase {
 
   _createInitialState() {
     return {
-      phase: 'ready',
+      phase: 'play',
       score: 0,
       lastBonus: 0,
       lander: createLander(),

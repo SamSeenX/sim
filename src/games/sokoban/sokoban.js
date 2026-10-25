@@ -18,7 +18,7 @@ export class SokobanGame extends GameBase {
   _createInitialState() {
     const parsed = parseLevel(0);
     return {
-      phase: 'ready',
+      phase: 'play',
       level: 0,
       moves: 0,
       score: 0,
