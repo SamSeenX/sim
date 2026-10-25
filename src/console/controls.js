@@ -2,28 +2,19 @@ import { emit } from '../core/event-bus.js';
 import { pulse } from './haptics.js';
 
 const KEY_MAP = {
-  // Primary D-Pad (Arrows)
   ArrowUp:    'up',
   ArrowDown:  'down',
   ArrowLeft:  'left',
   ArrowRight: 'right',
-
-  // WASD D-Pad
   KeyW:       'up',
   KeyS:       'down',
   KeyA:       'left',
   KeyD:       'right',
-
-  // A Button: Z, K, Space
   KeyZ:       'a',
   KeyK:       'a',
   Space:      'a',
-
-  // B Button: X, J
   KeyX:       'b',
   KeyJ:       'b',
-
-  // Start & Select
   Enter:      'start',
   ShiftLeft:  'select',
   ShiftRight: 'select',
@@ -36,6 +27,24 @@ export function setInputFilter(fn) {
   inputFilter = fn;
 }
 
+export function isHeld(action) {
+  return held.has(action);
+}
+
+function triggerDown(action) {
+  if (!action || held.has(action)) return;
+  held.add(action);
+  pulse(16);
+  if (inputFilter && inputFilter(action)) return;
+  emit('input:down', action);
+}
+
+function triggerUp(action) {
+  if (!action || !held.has(action)) return;
+  held.delete(action);
+  emit('input:up', action);
+}
+
 export function initControls() {
   window.addEventListener('keydown', e => {
     const action = KEY_MAP[e.code];
@@ -43,46 +52,97 @@ export function initControls() {
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
       e.preventDefault();
     }
-    if (held.has(action)) return;
-    held.add(action);
-    if (inputFilter && inputFilter(action)) return;
-    emit('input:down', action);
+    triggerDown(action);
   });
 
   window.addEventListener('keyup', e => {
     const action = KEY_MAP[e.code];
     if (!action) return;
-    held.delete(action);
-    emit('input:up', action);
+    triggerUp(action);
   });
 
-  // Touch and pointer interactions
-  document.querySelectorAll('[data-action]').forEach(btn => {
+  const dpad = document.querySelector('.pv-dpad');
+  if (dpad) {
+    let currentDpadAction = null;
+
+    const getActionUnderTouch = (touch) => {
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      const btn = el ? el.closest('.pv-btn-dpad') : null;
+      return btn ? btn.dataset.action : null;
+    };
+
+    const handleDpadTouch = (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      if (!touch) return;
+      const targetAction = getActionUnderTouch(touch);
+      if (targetAction !== currentDpadAction) {
+        if (currentDpadAction) {
+          highlightDpadBtn(currentDpadAction, false);
+          triggerUp(currentDpadAction);
+        }
+        if (targetAction) {
+          highlightDpadBtn(targetAction, true);
+          triggerDown(targetAction);
+        }
+        currentDpadAction = targetAction;
+      }
+    };
+
+    const handleDpadEnd = (e) => {
+      e.preventDefault();
+      if (currentDpadAction) {
+        highlightDpadBtn(currentDpadAction, false);
+        triggerUp(currentDpadAction);
+        currentDpadAction = null;
+      }
+    };
+
+    dpad.addEventListener('touchstart', handleDpadTouch, { passive: false });
+    dpad.addEventListener('touchmove',  handleDpadTouch, { passive: false });
+    dpad.addEventListener('touchend',   handleDpadEnd,   { passive: false });
+    dpad.addEventListener('touchcancel',handleDpadEnd,   { passive: false });
+  }
+
+  document.querySelectorAll('[data-action]:not(.pv-btn-dpad)').forEach(btn => {
     const action = btn.dataset.action;
-
-    const handleStart = ev => {
+    const onStart = ev => {
       ev.preventDefault();
-      pulse(20);
-      if (inputFilter && inputFilter(action)) return;
-      emit('input:down', action);
+      btn.classList.add('active');
+      triggerDown(action);
+    };
+    const onEnd = ev => {
+      ev.preventDefault();
+      btn.classList.remove('active');
+      triggerUp(action);
     };
 
-    const handleEnd = ev => {
-      ev.preventDefault();
-      emit('input:up', action);
-    };
+    btn.addEventListener('touchstart', onStart, { passive: false });
+    btn.addEventListener('touchend', onEnd, { passive: false });
+    btn.addEventListener('touchcancel', onEnd, { passive: false });
+    btn.addEventListener('mousedown', onStart);
+    btn.addEventListener('mouseup', onEnd);
+    btn.addEventListener('mouseleave', onEnd);
+  });
 
-    btn.addEventListener('touchstart', handleStart, { passive: false });
-    btn.addEventListener('touchend', handleEnd, { passive: false });
-    btn.addEventListener('touchcancel', handleEnd, { passive: false });
-
+  document.querySelectorAll('.pv-btn-dpad').forEach(btn => {
+    const action = btn.dataset.action;
     btn.addEventListener('mousedown', () => {
-      if (inputFilter && inputFilter(action)) return;
-      emit('input:down', action);
+      highlightDpadBtn(action, true);
+      triggerDown(action);
     });
-    btn.addEventListener('mouseup',   () => emit('input:up',   action));
-    btn.addEventListener('mouseleave',() => emit('input:up',   action));
+    btn.addEventListener('mouseup', () => {
+      highlightDpadBtn(action, false);
+      triggerUp(action);
+    });
+    btn.addEventListener('mouseleave', () => {
+      highlightDpadBtn(action, false);
+      triggerUp(action);
+    });
   });
 }
 
-export function isHeld(action) { return held.has(action); }
+function highlightDpadBtn(action, active) {
+  const btn = document.querySelector(`.pv-btn-dpad[data-action="${action}"]`);
+  if (btn) btn.classList.toggle('active', active);
+}

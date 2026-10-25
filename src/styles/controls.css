@@ -7,6 +7,6 @@
 
 @media (max-width: 480px) {
   .pv-btn-action { width: 56px; height: 56px; font-size: 16px; }
-  .pv-dpad { grid-template-columns: 44px 44px 44px; grid-template-rows: 44px 44px 44px; }
-  .pv-btn-dpad { min-width: 44px; min-height: 44px; }
+  .pv-dpad { grid-template-columns: 48px 48px 48px; grid-template-rows: 48px 48px 48px; }
+  .pv-btn-dpad { min-width: 48px; min-height: 48px; }
 }
