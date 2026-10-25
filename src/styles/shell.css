@@ -64,6 +64,13 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   opacity: 0.65;
+  color: var(--text);
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.pv-brand-sub:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
 
 .pv-desktop-hint {

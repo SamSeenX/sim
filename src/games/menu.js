@@ -11,7 +11,12 @@ const GAMES = [
   'DEFENDER',
   'PIXEL DRIFT',
   'GHOST MAZE',
-  'MICRO SWEEPER'
+  'MICRO SWEEPER',
+  'ORBIT BUSTER',
+  'TINY ROGUE',
+  'RIVER HOP',
+  'LANDER',
+  'SOKOBAN'
 ];
 const VISIBLE_COUNT = 5;
 

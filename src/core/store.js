@@ -12,7 +12,12 @@ const DEFAULTS = {
     defender: 0,
     'pixel-drift': 0,
     'ghost-maze': 0,
-    'micro-sweeper': 0
+    'micro-sweeper': 0,
+    'orbit-buster': 0,
+    'tiny-rogue': 0,
+    'river-hop': 0,
+    lander: 0,
+    sokoban: 0
   },
   activeGame: null,
 };

@@ -19,7 +19,24 @@ if (navigator.storage && navigator.storage.persist) {
 let activeGame = null;
 let currentGameName = 'menu';
 
-export function loadGame(name, s) {
+const GAME_LOADERS = {
+  menu: (s) => new MenuGame(s),
+  bouncer: async (s) => new (await import('./games/bouncer/bouncer.js')).BouncerGame(s),
+  blockfall: async (s) => new (await import('./games/blockfall/blockfall.js')).BlockFallGame(s),
+  'rooftop-cat': async (s) => new (await import('./games/rooftop-cat/rooftop.js')).RooftopGame(s),
+  snake: async (s) => new (await import('./games/snake/snake.js')).SnakeGame(s),
+  defender: async (s) => new (await import('./games/defender/defender.js')).DefenderGame(s),
+  'pixel-drift': async (s) => new (await import('./games/drift/drift.js')).DriftGame(s),
+  'ghost-maze': async (s) => new (await import('./games/maze/maze.js')).MazeGame(s),
+  'micro-sweeper': async (s) => new (await import('./games/sweeper/sweeper.js')).SweeperGame(s),
+  'orbit-buster': async (s) => new (await import('./games/orbit/orbit.js')).OrbitGame(s),
+  'tiny-rogue': async (s) => new (await import('./games/rogue/rogue.js')).RogueGame(s),
+  'river-hop': async (s) => new (await import('./games/river-hop/river.js')).RiverGame(s),
+  lander: async (s) => new (await import('./games/lander/lander.js')).LanderGame(s),
+  sokoban: async (s) => new (await import('./games/sokoban/sokoban.js')).SokobanGame(s),
+};
+
+export async function loadGame(name, s) {
   if (activeGame) {
     activeGame.destroy();
     activeGame = null;
@@ -27,75 +44,10 @@ export function loadGame(name, s) {
 
   currentGameName = name;
   const currentStore = s || store;
-
-  if (name === 'menu') {
-    activeGame = new MenuGame(currentStore);
+  const loader = GAME_LOADERS[name];
+  if (loader) {
+    activeGame = await loader(currentStore);
     activeGame.start();
-    return;
-  }
-
-  if (name === 'bouncer') {
-    import('./games/bouncer/bouncer.js').then(m => {
-      activeGame = new m.BouncerGame(currentStore);
-      activeGame.start();
-    });
-    return;
-  }
-
-  if (name === 'blockfall') {
-    import('./games/blockfall/blockfall.js').then(m => {
-      activeGame = new m.BlockFallGame(currentStore);
-      activeGame.start();
-    });
-    return;
-  }
-
-  if (name === 'rooftop-cat') {
-    import('./games/rooftop-cat/rooftop.js').then(m => {
-      activeGame = new m.RooftopGame(currentStore);
-      activeGame.start();
-    });
-    return;
-  }
-
-  if (name === 'snake') {
-    import('./games/snake/snake.js').then(m => {
-      activeGame = new m.SnakeGame(currentStore);
-      activeGame.start();
-    });
-    return;
-  }
-
-  if (name === 'defender') {
-    import('./games/defender/defender.js').then(m => {
-      activeGame = new m.DefenderGame(currentStore);
-      activeGame.start();
-    });
-    return;
-  }
-
-  if (name === 'pixel-drift') {
-    import('./games/drift/drift.js').then(m => {
-      activeGame = new m.DriftGame(currentStore);
-      activeGame.start();
-    });
-    return;
-  }
-
-  if (name === 'ghost-maze') {
-    import('./games/maze/maze.js').then(m => {
-      activeGame = new m.MazeGame(currentStore);
-      activeGame.start();
-    });
-    return;
-  }
-
-  if (name === 'micro-sweeper') {
-    import('./games/sweeper/sweeper.js').then(m => {
-      activeGame = new m.SweeperGame(currentStore);
-      activeGame.start();
-    });
-    return;
   }
 }
 

@@ -26,7 +26,14 @@
 - **Harmonious Reflective Palettes**: Refined substrate gap colors across all 4 themes (`ironside`, `phantom`, `ivory`, `midnight`) to remove harsh high-contrast dark green grid lines.
 - **Multi-Mode LCD Visual Engine**: Added interactive bezel toggle for cycling between `LCD: MATRIX` (authentic STN dot-matrix with glass sheen and vignette), `LCD: CRISP` (clean modern 8-bit pixels), and `LCD: CRT` (classic scanlines).
 - **Persistent LCD Preference**: Integrated screen mode state into `Store` with local storage durability.
-- **In-Game Accidental Exit Protection**: Integrated an authentic 4-shade LCD confirmation dialog ("EXIT GAME? YES / NO") that pauses active gameplay, traps inputs, and prevents accidental drops back to the main menu on stray [B] or [Select] presses.
+- **In-Game Accidental Exit Protection & RAF Pause**: Fixed RAF render loop overwrite so the chunky 160x144 exit confirmation dialog stays frozen and responsive on screen.
+- **5 New Retro Games Added**:
+  1. **Orbit Buster**: 360° rotational inertia physics, thrusters, and splitting asteroids.
+  2. **Tiny Rogue**: Top-down dungeon crawler with sword slashes, enemies, keys, and chests.
+  3. **River Hop**: Discrete hopping frog dodging highway traffic and floating across river logs.
+  4. **Gravity Lander**: Vector lunar lander with attitude control, fuel management, and craggy pad multipliers.
+  5. **Sokoban**: Classic warehouse crate pushing puzzles with move tracking.
+- **Branding Update**: Replaced top-right "8-BIT COLOR SYSTEM" badge with live link to `sim.samseen.dev`.
 
 ## Active Backlog
 - [ ] Cartridge insertion sound effect and splash animation.

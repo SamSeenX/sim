@@ -68,7 +68,7 @@ function buildShellHTML() {
 
         <div class="pv-brand-row">
           <div class="pv-brand">PIXELVAULT</div>
-          <div class="pv-brand-sub">8-BIT COLOR SYSTEM</div>
+          <a href="https://sim.samseen.dev" target="_blank" rel="noopener noreferrer" class="pv-brand-sub">sim.samseen.dev</a>
         </div>
 
         <div class="pv-screen-bezel">

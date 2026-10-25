@@ -14,6 +14,22 @@ export class GameBase {
 
   start() {
     this.init();
+    this.resume();
+  }
+
+  stop() {
+    if (this._raf) {
+      cancelAnimationFrame(this._raf);
+      this._raf = null;
+    }
+  }
+
+  pause() {
+    this.stop();
+  }
+
+  resume() {
+    if (this._raf) return;
     const loop = ts => {
       const dt = Math.min((ts - this._last) / 1000, 0.05);
       this._last = ts;
@@ -26,26 +42,5 @@ export class GameBase {
       this._last = ts;
       loop(ts);
     });
-  }
-
-  stop() {
-    if (this._raf) {
-      cancelAnimationFrame(this._raf);
-      this._raf = null;
-    }
-  }
-
-  pause() {
-    if (this.state && this.state.phase) {
-      this._savedPhase = this.state.phase;
-      this.state.phase = 'paused';
-    }
-  }
-
-  resume() {
-    if (this.state && this._savedPhase !== undefined) {
-      this.state.phase = this._savedPhase;
-      this._savedPhase = undefined;
-    }
   }
 }
