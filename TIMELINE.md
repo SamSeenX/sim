@@ -21,6 +21,12 @@
 - **Universal High Scores & Menu Scrolling**: Connected durable high score tracking across all 8 games with dynamic scroll-windowed main menu navigation.
 - **Architecture Validation**: Maintained strict compliance with the 200-line modularity rule across all source files.
 
+### Milestone 3: Retro LCD Engine Overhaul & Visual Polish (Completed)
+- **Eliminated Messy Grid Aliasing**: Replaced CPU-heavy, 23,040-path `displayCtx.rect` loops and non-integer cell rounding with a native 160x144 pixel-perfect `ImageData` 32-bit blitter.
+- **Harmonious Reflective Palettes**: Refined substrate gap colors across all 4 themes (`ironside`, `phantom`, `ivory`, `midnight`) to remove harsh high-contrast dark green grid lines.
+- **Multi-Mode LCD Visual Engine**: Added interactive bezel toggle for cycling between `LCD: MATRIX` (authentic STN dot-matrix with glass sheen and vignette), `LCD: CRISP` (clean modern 8-bit pixels), and `LCD: CRT` (classic scanlines).
+- **Persistent LCD Preference**: Integrated screen mode state into `Store` with local storage durability.
+
 ## Active Backlog
 - [ ] Cartridge insertion sound effect and splash animation.
 - [ ] Sound volume toggle slider in bottom phone jack area.

@@ -2,6 +2,7 @@ import { emit } from './event-bus.js';
 
 const DEFAULTS = {
   theme: 'ironside',
+  lcdMode: 'matrix',
   scores: {
     bouncer: 0,
     blockfall: 0,
@@ -22,6 +23,8 @@ function load() {
   try {
     const t = localStorage.getItem('pv_theme');
     if (t) state.theme = t;
+    const lm = localStorage.getItem('pv_lcd_mode');
+    if (lm && ['matrix', 'crisp', 'scanline'].includes(lm)) state.lcdMode = lm;
     const s = localStorage.getItem('pv_scores');
     if (s) {
       const parsed = JSON.parse(s);
@@ -33,6 +36,7 @@ function load() {
 function save() {
   try {
     localStorage.setItem('pv_theme', state.theme);
+    localStorage.setItem('pv_lcd_mode', state.lcdMode);
     localStorage.setItem('pv_scores', JSON.stringify(state.scores));
   } catch (_) { /* storage quota exceeded */ }
 }
@@ -45,6 +49,12 @@ export function initStore() {
       state.theme = t;
       save();
       emit('theme:change', t);
+    },
+    getLcdMode: () => state.lcdMode || 'matrix',
+    setLcdMode(mode) {
+      state.lcdMode = mode;
+      save();
+      emit('lcd:change', mode);
     },
     getScore(game) {
       if (!state.scores) return 0;

@@ -4,58 +4,65 @@ const LOGICAL_W = 160;
 const LOGICAL_H = 144;
 
 let displayCanvas, displayCtx;
-let pixelW = 2;
-let pixelH = 2;
-let cellW = 3;
-let cellH = 3;
+let imgData = null;
+let buf32 = null;
+let cachedPalette = null;
+let cachedTheme = null;
 
 // 160 x 144 typed array holding direct shade indices: 0, 1, 2, or 3
 const vram = new Uint8Array(LOGICAL_W * LOGICAL_H);
 
 export function initScreen() {
   displayCanvas = document.getElementById('pv-canvas');
+  displayCanvas.width = LOGICAL_W;
+  displayCanvas.height = LOGICAL_H;
+
   displayCtx = displayCanvas.getContext('2d', { alpha: false });
   displayCtx.imageSmoothingEnabled = false;
 
-  recalcDimensions();
-  window.addEventListener('resize', recalcDimensions);
+  imgData = displayCtx.createImageData(LOGICAL_W, LOGICAL_H);
+  buf32 = new Uint32Array(imgData.data.buffer);
 
+  cachedTheme = null;
+  cachedPalette = null;
+
+  window.addEventListener('resize', recalcDimensions);
   clearScreen();
 }
 
 export function recalcDimensions() {
-  const wrapper = document.querySelector('.pv-screen-wrapper');
-  if (!wrapper || !displayCanvas) return;
-
-  const availableW = wrapper.clientWidth;
-  if (!availableW) return;
-
-  // Calculate cell width across 160 logical pixels
-  const rawStep = availableW / LOGICAL_W;
-
-  // For genuine retro LCD look:
-  // If available space is larger, each LCD dot is chunky (2px to 3px) with a crisp 1px gap
-  const stepW = Math.max(2.5, rawStep);
-  const gap = 1;
-  const pw = Math.max(1.5, stepW - gap);
-  const ph = pw;
-  const stepH = pw + gap;
-
-  pixelW = pw;
-  pixelH = ph;
-  cellW = stepW;
-  cellH = stepH;
-
-  const totalW = Math.round(stepW * LOGICAL_W);
-  const totalH = Math.round(stepH * LOGICAL_H);
-
-  displayCanvas.width = totalW;
-  displayCanvas.height = totalH;
-  displayCanvas.style.width = '100%';
-  displayCanvas.style.height = '100%';
-
+  if (!displayCanvas || !displayCtx) return;
+  displayCanvas.width = LOGICAL_W;
+  displayCanvas.height = LOGICAL_H;
   displayCtx.imageSmoothingEnabled = false;
   blitToDisplay();
+}
+
+function parsePalette() {
+  const theme = document.documentElement.getAttribute('data-theme') || 'default';
+  if (cachedPalette && cachedTheme === theme) {
+    return cachedPalette;
+  }
+
+  const style = getComputedStyle(document.documentElement);
+  const hexes = [
+    style.getPropertyValue('--lcd-0').trim() || '#9bbc0f',
+    style.getPropertyValue('--lcd-1').trim() || '#8bac0f',
+    style.getPropertyValue('--lcd-2').trim() || '#306230',
+    style.getPropertyValue('--lcd-3').trim() || '#0f380f',
+  ];
+
+  cachedPalette = new Uint32Array(4);
+  for (let i = 0; i < 4; i++) {
+    const hex = hexes[i].replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16) || 0;
+    const g = parseInt(hex.substring(2, 4), 16) || 0;
+    const b = parseInt(hex.substring(4, 6), 16) || 0;
+    // Little-endian Uint32 format (0xAABBGGRR)
+    cachedPalette[i] = ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0;
+  }
+  cachedTheme = theme;
+  return cachedPalette;
 }
 
 export function drawPixel(lx, ly, shade = 3) {
@@ -121,43 +128,21 @@ export function drawText(text, lx, ly, shade = 3) {
 }
 
 export function blitToDisplay() {
-  if (!displayCtx || !displayCanvas) return;
+  if (!displayCtx || !buf32) return;
 
-  const style = getComputedStyle(document.documentElement);
-  const shades = [
-    style.getPropertyValue('--lcd-0').trim() || '#9bbc0f',
-    style.getPropertyValue('--lcd-1').trim() || '#8bac0f',
-    style.getPropertyValue('--lcd-2').trim() || '#306230',
-    style.getPropertyValue('--lcd-3').trim() || '#0f380f',
-  ];
-  const gap = style.getPropertyValue('--lcd-gap').trim() || '#85a50e';
+  const palette = parsePalette();
+  const total = LOGICAL_W * LOGICAL_H;
 
-  // 1. Fill entire display with gap matrix color
-  displayCtx.fillStyle = gap;
-  displayCtx.fillRect(0, 0, displayCanvas.width, displayCanvas.height);
-
-  const pw = Math.round(pixelW);
-  const ph = Math.round(pixelH);
-
-  // 2. Render each shade
-  for (let s = 0; s < 4; s++) {
-    displayCtx.fillStyle = shades[s];
-    displayCtx.beginPath();
-
-    for (let ly = 0; ly < LOGICAL_H; ly++) {
-      const vramRow = ly * LOGICAL_W;
-      const yPos = Math.round(ly * cellH);
-
-      for (let lx = 0; lx < LOGICAL_W; lx++) {
-        if (vram[vramRow + lx] === s) {
-          const xPos = Math.round(lx * cellW);
-          displayCtx.rect(xPos, yPos, pw, ph);
-        }
-      }
-    }
-
-    displayCtx.fill();
+  for (let i = 0; i < total; i++) {
+    buf32[i] = palette[vram[i]];
   }
+
+  displayCtx.putImageData(imgData, 0, 0);
+}
+
+export function invalidatePalette() {
+  cachedPalette = null;
+  cachedTheme = null;
 }
 
 export function getLogicalW() { return LOGICAL_W; }
