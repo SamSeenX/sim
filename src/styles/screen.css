@@ -159,3 +159,10 @@
   pointer-events: none;
   z-index: 3;
 }
+
+@media (max-width: 600px) {
+  .pv-screen-bezel {
+    padding: 10px 12px 8px 12px;
+    border-radius: 8px 8px 24px 8px;
+  }
+}

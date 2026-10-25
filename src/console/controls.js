@@ -141,7 +141,7 @@ export function initControls() {
     });
   });
 
-  // Prevent any document-level touchmove rubber-banding or UI dragging
+  // Prevent browser window rubber-banding and touch dragging
   document.addEventListener('touchmove', e => {
     e.preventDefault();
   }, { passive: false });

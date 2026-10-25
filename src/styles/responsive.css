@@ -1,13 +1,17 @@
-/* Responsive Console Layout: Auto-adjusting & Zero-Scroll PWA */
+/* Desktop and Mobile Responsive Layout Rules */
 @media (max-width: 600px) {
+  html, body {
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
+  }
+
   .pv-scene {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
     padding: 0;
     margin: 0;
+    width: 100vw;
+    height: 100dvh;
+    min-height: 100dvh;
     overflow: hidden;
     background: var(--shell-bg);
     touch-action: none;
@@ -16,112 +20,48 @@
   .pv-console {
     width: 100vw;
     height: 100dvh;
-    max-height: 100dvh;
+    min-height: 100dvh;
     border-radius: 0;
     box-shadow: none;
     border: none;
-    padding: calc(env(safe-area-inset-top, 8px) + 4px) 14px calc(env(safe-area-inset-bottom, 8px) + 6px);
+    padding: calc(env(safe-area-inset-top, 8px) + 6px) 16px calc(env(safe-area-inset-bottom, 8px) + 8px);
     justify-content: space-between;
-    gap: 4px;
+    gap: 8px;
     overflow: hidden;
     touch-action: none;
-    box-sizing: border-box;
   }
 
   .pv-desktop-hint {
     display: none;
   }
 
-  .pv-top-ridge {
-    margin-bottom: 0;
+  .pv-controls-section {
+    padding: 0 10px;
+    margin-top: auto;
   }
 
-  .pv-screen-bezel {
-    flex: 1 1 auto;
-    min-height: 0;
-    width: 100%;
-    padding: 6px 10px 6px 10px;
-    border-radius: 8px 8px 24px 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  .pv-dpad {
+    grid-template-columns: 48px 48px 48px;
+    grid-template-rows: 48px 48px 48px;
   }
 
-  .pv-bezel-header {
+  .pv-btn-action {
+    width: 52px;
+    height: 52px;
+    font-size: 17px;
+  }
+
+  .pv-action-pill {
+    padding: 8px 12px;
+    gap: 20px;
+  }
+
+  .pv-sys-row {
     margin-bottom: 4px;
   }
 
-  .pv-screen-wrapper {
-    flex: 1 1 auto;
-    min-height: 0;
-    max-height: 100%;
-    max-width: 100%;
-    aspect-ratio: 160 / 144;
-    width: auto;
-    height: auto;
-  }
-
-  .pv-controls-section {
-    flex-shrink: 0;
-    width: 100%;
-    padding: 0 4px;
-    margin-top: 0;
-  }
-
-  .pv-dpad {
-    grid-template-columns: 46px 46px 46px;
-    grid-template-rows: 46px 46px 46px;
-  }
-
-  .pv-btn-action {
-    width: 50px;
-    height: 50px;
-    font-size: 16px;
-  }
-
-  .pv-action-pill {
-    padding: 6px 10px;
-    gap: 16px;
-  }
-
-  .pv-sys-row {
-    margin-top: 4px;
-    margin-bottom: 2px;
-  }
-
   .pv-btn-sys {
-    width: 44px;
-    height: 14px;
-  }
-
-  .pv-lower-deck {
-    margin-top: 4px;
-  }
-}
-
-@media (max-height: 650px) {
-  .pv-top-ridge { display: none; }
-  .pv-brand-row { display: none; }
-  .pv-dpad {
-    grid-template-columns: 40px 40px 40px;
-    grid-template-rows: 40px 40px 40px;
-  }
-  .pv-btn-action {
-    width: 44px;
-    height: 44px;
-    font-size: 14px;
-  }
-  .pv-action-pill {
-    padding: 4px 8px;
-    gap: 10px;
-  }
-  .pv-sys-row {
-    margin-top: 2px;
-    margin-bottom: 0;
-  }
-  .pv-lower-deck {
-    margin-top: 2px;
+    width: 48px;
+    height: 15px;
   }
 }
