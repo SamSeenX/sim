@@ -35,6 +35,11 @@
   5. **Sokoban**: Classic warehouse crate pushing puzzles with move tracking.
 - **Branding Update**: Replaced top-right "8-BIT COLOR SYSTEM" badge with live link to `sim.samseen.dev`.
 
+### Milestone 4: Fluid Responsive Auto-Adjust & Zero-Scroll PWA
+- **Zero-Scroll Rigid Handheld PWA**: Locked `html`, `body`, `#app`, and `.pv-scene` with `position: fixed`, `overflow: hidden`, and `touch-action: none` to eliminate rubber-banding, viewport bounce, and page scrolling.
+- **Fluid Aspect-Ratio Auto-Adjust**: Refactored `.pv-screen-bezel` to `flex: 1 1 auto; min-height: 0;` and `.pv-screen-wrapper` with dynamic aspect-ratio clamping (`160/144`), dynamically auto-fitting any viewport height without clipping controls or overflowing.
+- **Short Screen Breakpoint (`max-height: 650px`)**: Compact mode automatically compresses headers and button spacing on smaller mobile displays.
+
 ## Active Backlog
 - [ ] Cartridge insertion sound effect and splash animation.
 - [ ] Sound volume toggle slider in bottom phone jack area.
