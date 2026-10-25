@@ -140,6 +140,11 @@ export function initControls() {
       triggerUp(action);
     });
   });
+
+  // Prevent browser window rubber-banding and touch dragging
+  document.addEventListener('touchmove', e => {
+    e.preventDefault();
+  }, { passive: false });
 }
 
 function highlightDpadBtn(action, active) {
